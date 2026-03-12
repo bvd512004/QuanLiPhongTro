@@ -95,7 +95,7 @@ const HomePage = () => {
         <section className="mb-16">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h2 className="text-3xl font-bold text-[#0d141b] dark:text-white flex items-center gap-2">
+              <h2 className="text-3xl font-bold text-[#0d141b] flex items-center gap-2">
                 <span className="material-symbols-outlined !text-[32px] text-red-500 filled">local_fire_department</span>
                 Phòng trọ HOT tháng này
               </h2>
@@ -108,7 +108,7 @@ const HomePage = () => {
           {loading ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
               {Array.from({ length: 8 }).map((_, i) => (
-                <div key={`skeleton-long-${i}`} className="animate-pulse bg-gray-200 dark:bg-gray-700 h-64 rounded-xl" />
+                <div key={`skeleton-long-${i}`} className="animate-pulse bg-gray-200 h-64 rounded-xl" />
               ))}
             </div>
           ) : (
@@ -122,7 +122,7 @@ const HomePage = () => {
         <section>
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h2 className="text-3xl font-bold text-[#0d141b] dark:text-white flex items-center gap-2">
+              <h2 className="text-3xl font-bold text-[#0d141b] flex items-center gap-2">
                 <span className="material-symbols-outlined !text-[32px] text-yellow-500 filled">star</span>
                 Căn hộ nổi bật
               </h2>
@@ -135,7 +135,7 @@ const HomePage = () => {
           {loading ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
               {Array.from({ length: 4 }).map((_, i) => (
-                <div key={`skeleton-short-${i}`} className="animate-pulse bg-gray-200 dark:bg-gray-700 h-64 rounded-xl" />
+                <div key={`skeleton-short-${i}`} className="animate-pulse bg-gray-200 h-64 rounded-xl" />
               ))}
             </div>
           ) : (
