@@ -20,7 +20,7 @@ const Hero = ({ onSearch, initialKeyword = '', defaultMode = 'long-term' }) => {
   return (
     <div
       ref={heroRef}
-      className="w-full bg-surface-light dark:bg-surface-dark pt-6 px-4 sm:px-8 lg:px-12 border-b border-[#e7edf3] dark:border-gray-800 transition-all duration-300 pb-10"
+      className="w-full bg-surface-light pt-6 px-4 sm:px-8 lg:px-12 border-b border-[#e7edf3] transition-all duration-300 pb-10"
     >
       <div className="mx-auto max-w-[1440px]">
         {/* Hero Content */}
