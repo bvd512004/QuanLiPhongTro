@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import HostSidebar from '@/components/host/HostSidebar';
-import HostHeader from '@/components/host/HostHeader';
-import ReservationStats from '@/components/host/ReservationStats';
-import ReservationList from '@/components/host/ReservationList';
-import ReservationCalendar from '@/components/host/ReservationCalendar';
-import ReservationSidebar from '@/components/host/ReservationSidebar';
-import { useAuth } from '@/contexts/AuthContext';
+import HostSidebar from '../components/HostSidebar';
+import HostHeader from '../components/HostHeader';
+import ReservationStats from '../components/ReservationStats';
+import ReservationList from '../components/ReservationList';
+import ReservationCalendar from '../components/ReservationCalendar';
+import ReservationSidebar from '../components/ReservationSidebar';
+// import { useAuth } from '@/contexts/AuthContext';
 
 const ReservationsPage = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
