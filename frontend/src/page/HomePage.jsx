@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Hero from '@/app/component/home/Hero.jsx';
-import ListingCard from '@/app/component/home/ListingCard.jsx';
+import Hero from '../app/component/home/Hero.jsx';
+import ListingCard from '../app/component/home/ListingCard.jsx';
 import { api } from '@/services/api';
 
 const HomePage = () => {
@@ -33,22 +33,27 @@ const HomePage = () => {
         }
 
         if (response.success && response.data) {
-          const allProperties = response.data.map((p) => ({
-            id: String(p.id),
-            image: p.primaryImageUrl || p.images?.[0]?.imageUrl || '',
-            location: `${p.city}, ${p.country}`,
-            details: `${p.propertyType} • ${p.bedrooms} bedrooms • ${p.maxGuests} guests`,
-            dates: 'Available now',
-            rating: p.averageRating || 0,
-            price: p.pricePerNight,
-            rentalType: p.rentalType || 'SHORT_TERM',
-            pricePerMonth: p.pricePerMonth || 0,
-            isGuestFavorite: p.isFeatured,
-          }));
+          const allProperties = response.data.map((p) => {
+            const prettyType = p.propertyType
+              ? p.propertyType.replace(/_/g, ' ').toLowerCase()
+              : '';
 
-          // Phân loại
-          const longTerm = allProperties.filter((p) => p.rentalType === 'LONG_TERM').slice(0, 8);
-          const shortTerm = allProperties.filter((p) => p.rentalType === 'SHORT_TERM' || !p.rentalType).slice(0, 4);
+            return {
+              id: String(p.id),
+              image: p.primaryImageUrl || '',
+              location: [p.city, p.country].filter(Boolean).join(', '),
+              details: `${prettyType} • ${p.bedrooms || 0} phòng ngủ • ${p.maxGuests || 0} khách`,
+              dates: 'Available now',
+              rating: p.averageRating || 0,
+              price: p.pricePerNight,
+              isGuestFavorite: p.isFeatured,
+            };
+          });
+
+          // Tạm thời: tất cả dữ liệu được hiển thị như short-term;
+          // long-term và short-term có thể phân loại sau nếu backend hỗ trợ.
+          const longTerm = [];
+          const shortTerm = allProperties.slice(0, 12);
 
           setHotLongTermProperties(longTerm);
           setHotShortTermProperties(shortTerm);

@@ -30,5 +30,14 @@ public class ApiResponse<T> {
                 .build();
     }
 
+    public static <T> ApiResponse<T> success(T data) {
+        return ApiResponse.<T>builder()
+                .success(true)
+                .message("Success")
+                .data(data)
+                .timestamp(LocalDateTime.now())
+                .build();
+    }
+
 }
 
