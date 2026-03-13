@@ -1,11 +1,11 @@
 package sba301.backend.dto.response;
 
-import com.stayease.enums.BookingStatus;
-import com.stayease.enums.PaymentStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import sba301.backend.enums.BookingStatus;
+import sba301.backend.enums.PaymentStatus;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

@@ -33,15 +33,7 @@ public class PropertyResponse {
 
     // Short-term rental pricing
     private BigDecimal pricePerNight;
-
     // Long-term rental pricing
-    private BigDecimal pricePerMonth;
-    private String electricityCost;
-    private String waterCost;
-    private String internetCost;
-    private Integer depositMonths;
-    private Integer minimumLeaseMonths;
-
     private BigDecimal cleaningFee;
     private BigDecimal serviceFee;
     private Integer maxGuests;

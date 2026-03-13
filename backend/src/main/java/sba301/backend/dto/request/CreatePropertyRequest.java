@@ -50,9 +50,6 @@ public class CreatePropertyRequest {
     
     @DecimalMin(value = "0")
     private BigDecimal serviceFee;
-    
-    @DecimalMin(value = "0")
-    private BigDecimal securityDeposit;
 
     @NotNull(message = "Max guests is required")
     @Min(value = 1)
