@@ -32,13 +32,6 @@ public class PropertyService {
     @Autowired
     PropertyMapper propertyMapper;
 
-    public PropertyResponse getPropertyById(Long id) {
-        Property property = propertyRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Property not found"));
-
-        propertyRepository.incrementViewCount(id);
-        return propertyMapper.toResponse(property);
-    }
 
     public PageResponse<PropertyResponse> getAllActiveProperties(int page, int size, String sortBy, String sortDir) {
         Sort sort = sortDir.equalsIgnoreCase("desc")

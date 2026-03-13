@@ -1,6 +1,6 @@
 import axiosClient from '../shared/services/axiosClient';
 
-// Wrapper around backend API endpoints; adjust paths as needed when backend is ready.
+
 export const api = {
   getFeaturedProperties: async (limit) => {
     try {
