@@ -1,9 +1,9 @@
 package sba301.backend.entity;
 
-import com.stayease.enums.TransactionStatus;
-import com.stayease.enums.TransactionType;
 import jakarta.persistence.*;
 import lombok.*;
+import sba301.backend.enums.TransactionStatus;
+import sba301.backend.enums.TransactionType;
 
 import java.math.BigDecimal;
 
