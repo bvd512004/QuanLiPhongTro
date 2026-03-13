@@ -1,15 +1,11 @@
 import React from "react";
-import HomePage from "../page/HomePage";
-import Layout from "../layout/Layout";
-
+import { PublicLayout } from "../layouts/PublicLayout";
 const publicRoutes = [
-    {
-        element: <Layout />,
-        children: [
-            { path: "/", element: <HomePage /> },
+    { path: "/login", element: <LoginPage /> },
+    {path: "/register", element: <RegisterPage />},
+    {path:"/",element:<PublicLayout/>, children:[
         
-        ]
-    }
+    ]}
 ];
 
 export default publicRoutes;

@@ -147,6 +147,18 @@ public class Property extends BaseEntity {
     @Builder.Default
     private List<Favorite> favorites = new ArrayList<>();
 
-
+    // Helper methods
+    public void addImage(PropertyImage image) {
+        images.add(image);
+        image.setProperty(this);
+    }
+    
+    public String getPrimaryImageUrl() {
+        return images.stream()
+            .filter(PropertyImage::getIsPrimary)
+            .findFirst()
+            .map(PropertyImage::getImageUrl)
+            .orElse(images.isEmpty() ? null : images.get(0).getImageUrl());
+    }
 }
 

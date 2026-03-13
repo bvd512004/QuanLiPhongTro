@@ -9,6 +9,8 @@ import sba301.backend.enums.PropertyType;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Set;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -27,9 +29,7 @@ public class PropertyResponse {
     private BigDecimal latitude;
     private BigDecimal longitude;
 
-
     private BigDecimal pricePerNight;
-
     private BigDecimal cleaningFee;
     private BigDecimal serviceFee;
     private Integer maxGuests;
@@ -49,7 +49,12 @@ public class PropertyResponse {
     private BigDecimal averageRating;
     private Integer totalReviews;
     private Long viewCount;
+    private UserResponse host;
+    private CategoryResponse category;
+    private List<PropertyImageResponse> images;
+    private Set<AmenityResponse> amenities;
     private String primaryImageUrl;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }
+
