@@ -17,14 +17,16 @@ import java.time.LocalDateTime;
 public class ApiResponse<T> {
     @Builder.Default
     private int code = 1000;
-
+    private boolean success;
+    private LocalDateTime timestamp;
     private String message;
     private T data;
 
     public static <T> ApiResponse<T> error(String message) {
         return ApiResponse.<T>builder()
-                .code(4000)
+                .success(false)
                 .message(message)
+                .timestamp(LocalDateTime.now())
                 .build();
     }
 
@@ -34,6 +36,7 @@ public class ApiResponse<T> {
                 .data(data)
                 .build();
     }
+
 
     public static <T> ApiResponse<T> success(String message, T data) {
         return ApiResponse.<T>builder()
