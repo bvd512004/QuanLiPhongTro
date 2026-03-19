@@ -14,11 +14,8 @@ const HomePage = () => {
   useEffect(() => {
     const fetchHotProperties = async () => {
       setLoading(true);
-      try {
-        // Thử lấy danh sách nổi bật trước
+      try { 
         let response = await api.getFeaturedProperties(16);
-
-        // Fallback: Nếu không có dữ liệu nổi bật, lấy tất cả
         if (!response.success || !response.data || response.data.length === 0) {
           console.log('No featured properties, fetching all properties...');
           const allPropertiesResponse = await api.filterProperties({}, 0, 16);
@@ -49,10 +46,6 @@ const HomePage = () => {
               isGuestFavorite: p.isFeatured,
             };
           });
-
-          // Tạm thời: tất cả dữ liệu được hiển thị như short-term;
-          // long-term và short-term có thể phân loại sau nếu backend hỗ trợ.
-          const longTerm = [];
           const shortTerm = allProperties.slice(0, 12);
 
           setHotLongTermProperties(longTerm);
@@ -68,7 +61,6 @@ const HomePage = () => {
     fetchHotProperties();
   }, []);
 
-  // Xử lý tìm kiếm
   const handleSearch = (criteria) => {
     const params = new URLSearchParams();
     

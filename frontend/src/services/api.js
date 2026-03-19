@@ -23,6 +23,7 @@ export const api = {
       const response = await axiosClient.get('api/v1/properties', { params });
       // tuỳ backend, nếu cũng bọc kiểu { success, data: { content: [...] } } thì xử lý tương tự
       const payload = response.data;
+      console.log('Filtered properties response:', payload);
       return { success: true, data: payload };
     } catch (error) {
       console.error('Error filtering properties', error);

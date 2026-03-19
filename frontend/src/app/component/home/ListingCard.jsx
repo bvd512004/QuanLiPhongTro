@@ -22,6 +22,11 @@ const ListingCard = ({ listing }) => {
     return queryString ? `${url}?${queryString}` : url;
   };
 
+  // Định dạng rating
+  const formatRating = (rating) => {
+    return rating ? rating.toFixed(1) : 'N/A';
+  };
+
   // Định dạng tiền tệ kiểu Việt Nam
   const formatPrice = (price) => {
     return new Intl.NumberFormat('vi-VN').format(price);
@@ -33,7 +38,10 @@ const ListingCard = ({ listing }) => {
         <img
           alt={listing.location}
           className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-          src={listing.image}
+          src={listing.image || 'https://via.placeholder.com/300x200?text=No+Image'}
+          onError={(e) => {
+            e.target.src = 'https://via.placeholder.com/300x200?text=No+Image';
+          }}
         />
         <button 
           className="absolute top-3 right-3 p-2 rounded-full bg-transparent hover:bg-white/10 text-white transition-colors"
@@ -57,7 +65,7 @@ const ListingCard = ({ listing }) => {
         </div>
         <div className="flex items-center gap-1">
           <span className="material-symbols-outlined !text-[16px] text-[#0d141b] filled">star</span>
-          <span className="text-sm font-medium text-[#0d141b]">{listing.rating}</span>
+          <span className="text-sm font-medium text-[#0d141b]">{formatRating(listing.rating)}</span>
         </div>
       </div>
 
