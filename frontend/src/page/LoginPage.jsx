@@ -17,7 +17,9 @@ function LoginPage() {
     try {
       const res = await loginApi(email, password);
 
-      localStorage.setItem("token", res.accessToken);
+      if (!res?.accessToken) {
+        throw new Error("Không nhận được token sau khi đăng nhập");
+      }
 
       login({
         token: res.accessToken,
@@ -25,7 +27,11 @@ function LoginPage() {
       });
 
       alert("Login success");
-      navigate("/");
+      if (Array.isArray(res.user?.roles) && res.user.roles.includes('ROLE_ADMIN')) {
+        navigate("/admin/properties/moderation");
+      } else {
+        navigate("/");
+      }
 
     } catch (err) {
       console.error(err);
