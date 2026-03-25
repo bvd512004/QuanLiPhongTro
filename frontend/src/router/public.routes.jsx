@@ -3,6 +3,7 @@ import Layout from "../layout/Layout";
 import HomePage from "../page/HomePage";
 import LoginPage from "../page/LoginPage";
 import RegisterPage from "../page/RegisterPage";
+import AdminPropertyModerationPage from "../feature/admin/pages/AdminPropertyModerationPage";
 const publicRoutes = [
     
     {
@@ -32,6 +33,14 @@ const publicRoutes = [
         element: <Layout />,
         children: [
             { index: true, element: <HomePage /> },
+        ],
+    }
+    ,
+    {
+        path: "/admin/properties/moderation",
+        element: <Layout />,
+        children: [
+            { index: true, element: <AdminPropertyModerationPage /> },
         ],
     }
 ];
