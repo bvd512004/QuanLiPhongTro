@@ -19,18 +19,14 @@ public final class PropertySpecifications {
     public static Specification<Property> buildModerationSpec(PropertyStatus status, String keyword) {
         return (root, query, cb) -> {
             query.distinct(true);
-//// Phải viết SQL thường
-//String sql = "SELECT * FROM properties WHERE status = ? AND is_deleted = false AND (title LIKE ? OR host_email LIKE ?)";
-//
-//// Hoặc viết HQL dài dòng
-//String hql = "FROM Property p LEFT JOIN User u ON p.host_id = u.id WHERE p.status = :status AND p.isDeleted = false AND (LOWER(p.title) LIKE :keyword OR LOWER(u.email) LIKE :keyword)";
             List<Predicate> predicates = new ArrayList<>();
 
             // always filter by status (non-null is guaranteed by caller)
             predicates.add(cb.equal(root.get("status"), status));
 
             // optional: filter out soft-deleted records if needed
-            predicates.add(cb.isFalse(root.get("isDeleted")));
+            // If `is_deleted` is NULL (existing rows), treat it as not deleted.
+            predicates.add(cb.or(cb.isNull(root.get("isDeleted")), cb.isFalse(root.get("isDeleted"))));
 
             if (keyword != null && !keyword.trim().isEmpty()) {
                 String kw = "%" + keyword.toLowerCase().trim() + "%";

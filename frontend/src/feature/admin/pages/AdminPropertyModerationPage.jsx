@@ -7,6 +7,7 @@ import RejectModal from '@/feature/admin/components/RejectModal';
 
 const AdminPropertyModerationPage = () => {
   const [filters, setFilters] = useState({
+    // Admin mặc định xem các property đang INACTIVE (có thể đổi trong filter)
     status: 'INACTIVE',
     keyword: '',
   });
@@ -44,20 +45,21 @@ const AdminPropertyModerationPage = () => {
         return;
       }
 
-      const data = response.data?.data;
-      if (!data) {
+      // adminPropertyApi trả về { success, data } trong đó data chính là PageResponse
+      const pageResponse = response.data;
+      if (!pageResponse) {
         setItems([]);
         setPageInfo((prev) => ({ ...prev, totalItems: 0, totalPages: 0 }));
         return;
       }
 
-      setItems(data.items || []);
+      setItems(pageResponse.items || []);
       setPageInfo((prev) => ({
         ...prev,
-        page: data.page ?? prev.page,
-        size: data.size ?? prev.size,
-        totalItems: data.totalItems ?? 0,
-        totalPages: data.totalPages ?? 0,
+        page: pageResponse.page ?? prev.page,
+        size: pageResponse.size ?? prev.size,
+        totalItems: pageResponse.totalItems ?? 0,
+        totalPages: pageResponse.totalPages ?? 0,
       }));
     } finally {
       setLoading(false);

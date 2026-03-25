@@ -4,7 +4,8 @@ export const adminPropertyApi = {
   getProperties: async ({ status = 'INACTIVE', keyword = '', page = 0, size = 20, sort = 'createdAt,desc' }) => {
     try {
       const params = { status, keyword: keyword || undefined, page, size, sort };
-      const response = await axiosClient.get('/api/v1/admin/properties/moderation', { params });
+      // axiosClient đã có baseURL: .../api/v1
+      const response = await axiosClient.get('/admin/properties/moderation', { params });
       return { success: true, data: response.data };
     } catch (error) {
       console.error('Error fetching admin properties for moderation', error);
@@ -15,7 +16,7 @@ export const adminPropertyApi = {
 
   approveProperty: async (id) => {
     try {
-      const response = await axiosClient.patch(`/api/v1/admin/properties/${id}/approve`);
+      const response = await axiosClient.patch(`/admin/properties/${id}/approve`);
       return { success: true, data: response.data };
     } catch (error) {
       console.error('Error approving property', error);
@@ -26,7 +27,7 @@ export const adminPropertyApi = {
 
   rejectProperty: async (id, reason) => {
     try {
-      const response = await axiosClient.patch(`/api/v1/admin/properties/${id}/reject`, { reason });
+      const response = await axiosClient.patch(`/admin/properties/${id}/reject`, { reason });
       return { success: true, data: response.data };
     } catch (error) {
       console.error('Error rejecting property', error);

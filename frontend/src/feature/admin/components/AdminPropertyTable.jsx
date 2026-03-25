@@ -50,7 +50,7 @@ const AdminPropertyTable = ({ items, onApprove, onReject, loading }) => {
             <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Host email</th>
             <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Host name</th>
             <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created at</th>
-            <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider sticky right-0 bg-gray-50 z-10">
               Actions
             </th>
           </tr>
@@ -75,7 +75,7 @@ const AdminPropertyTable = ({ items, onApprove, onReject, loading }) => {
               <td className="px-4 py-3 text-sm text-gray-900">{item.hostEmail}</td>
               <td className="px-4 py-3 text-sm text-gray-900">{item.hostFullName}</td>
               <td className="px-4 py-3 text-sm text-gray-900">{formatDateTime(item.createdAt)}</td>
-              <td className="px-4 py-3 text-sm text-right">
+              <td className="px-4 py-3 text-sm text-right sticky right-0 bg-white z-10">
                 <div className="flex justify-end gap-2">
                   <button
                     type="button"
