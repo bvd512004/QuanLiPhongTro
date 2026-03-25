@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { hostService } from '../services/host.service';
+import  hostService  from '../services/host.service';
 
 const ReservationCalendar = () => {
   const [calendarData, setCalendarData] = useState(null);

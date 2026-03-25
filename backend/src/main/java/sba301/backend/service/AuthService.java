@@ -23,7 +23,7 @@ import sba301.backend.exception.BadRequestException;
 import sba301.backend.exception.ConflictException;
 import sba301.backend.repository.RoleRepository;
 import sba301.backend.repository.UserRepository;
-import sba301.backend.utils.UserMapper;
+import sba301.backend.mapper.UserMapper;
 
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)

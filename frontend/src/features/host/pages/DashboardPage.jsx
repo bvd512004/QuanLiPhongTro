@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import HostSidebar from '@/components/host/HostSidebar';
-import HostHeader from '@/components/host/HostHeader';
-import DashboardStats from '@/components/host/DashboardStats';
-import RevenueChart from '@/components/host/RevenueChart';
-import DashboardBookings from '@/components/host/DashboardBookings';
-import { useAuth } from '@/contexts/AuthContext';
+import HostSidebar from '../components/HostSidebar';
+import HostHeader from '../components/HostHeader';
+import DashboardStats from '../components/DashboardStats';
+import RevenueChart from '../components/RevenueChart';
+import DashboardBookings from '../components/DashboardBookings';
+// import { useAuth } from '@/contexts/AuthContext';
 
 const DashboardPage = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);

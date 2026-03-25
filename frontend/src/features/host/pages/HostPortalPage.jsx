@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import HostSidebar from '@/components/host/HostSidebar';
-import HostHeader from '@/components/host/HostHeader';
-import HostPropertyCard from '@/components/host/HostPropertyCard';
-import { useAuth } from '@/contexts/AuthContext';
+import HostSidebar from '../components/HostSidebar';
+import HostHeader from '../components/HostHeader';
+import HostPropertyCard from '../components/HostPropertyCard';
+// import { useAuth } from '@/contexts/AuthContext';
 import hostService from "../services/host.service.js";
 
 const HostPortalPage = () => {
@@ -12,7 +12,7 @@ const HostPortalPage = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [properties, setProperties] = useState([]);
   const [loadingProperties, setLoadingProperties] = useState(true);
-  const { user, loading } = useAuth();
+  const { user, loading } = useState(null);
 
   useEffect(() => {
     if (user && (user.isHost || user.roles?.includes('ROLE_HOST'))) {

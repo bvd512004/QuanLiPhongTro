@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { hostService } from '../services/host.service';
+import  hostService  from '../services/host.service';
 
 const HostPropertyCard = ({ property, onRefresh }) => {
   const [loading, setLoading] = useState(false);

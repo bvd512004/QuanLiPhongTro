@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { hostService } from '../services/host.service';
+import  hostService  from '../services/host.service';
 
 const RevenueChart = () => {
   const [monthlyData, setMonthlyData] = useState([]);

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { hostService } from '../services/host.service';
-import { useAuth } from '../../../app/providers/AuthProvider';
+import  hostService  from '../services/host.service';
+// import { useAuth } from '../../../app/providers/AuthProvider';
 
 const ReservationList = () => {
   const { user } = useAuth();
