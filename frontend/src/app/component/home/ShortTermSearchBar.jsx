@@ -67,14 +67,14 @@ const ShortTermSearchBar = ({ onSearch, initialKeyword = '' }) => {
   };
 
   return (
-    <div className="w-full max-w-[850px] bg-white dark:bg-gray-800 rounded-[32px] md:rounded-full shadow-xl flex flex-col md:flex-row items-stretch md:items-center divide-y md:divide-y-0 md:divide-x divide-gray-200 dark:divide-gray-700 p-0 md:p-2 relative" style={{ overflow: 'visible' }}>
+    <div className="w-full max-w-[850px] bg-white rounded-[32px] md:rounded-full shadow-xl flex flex-col md:flex-row items-stretch md:items-center divide-y md:divide-y-0 md:divide-x divide-gray-200 p-0 md:p-2 relative" style={{ overflow: 'visible' }}>
       {/* Location */}
-      <div className="relative flex-1 w-full px-8 py-4 md:px-6 md:py-3 hover:bg-gray-50 dark:hover:bg-gray-700/50 md:rounded-full cursor-pointer transition-colors group text-left">
-        <label className="block text-xs font-bold text-[#0d141b] dark:text-white uppercase tracking-wider mb-0.5">
+      <div className="relative flex-1 w-full px-8 py-4 md:px-6 md:py-3 hover:bg-gray-50 md:rounded-full cursor-pointer transition-colors group text-left">
+        <label className="block text-xs font-bold text-[#0d141b] uppercase tracking-wider mb-0.5">
           Where
         </label>
         <input
-          className="w-full border-none p-0 text-sm bg-transparent focus:ring-0 placeholder:text-gray-400 text-gray-700 dark:text-gray-200 truncate focus:outline-none"
+          className="w-full border-none p-0 text-sm bg-transparent focus:ring-0 placeholder:text-gray-400 text-gray-700 truncate focus:outline-none"
           placeholder="Search destinations"
           type="text"
           value={searchKeyword}
@@ -84,31 +84,31 @@ const ShortTermSearchBar = ({ onSearch, initialKeyword = '' }) => {
       </div>
 
       {/* Check in / Check out */}
-      <div className="relative flex md:divide-x divide-gray-200 dark:divide-gray-700" ref={dateRef}>
+      <div className="relative flex md:divide-x divide-gray-200" ref={dateRef}>
         <div
           onClick={() => setOpenPanel(openPanel === 'dates' ? null : 'dates')}
           className={`relative w-full md:w-[140px] px-8 py-4 md:px-6 md:py-3 md:rounded-full cursor-pointer transition-colors group text-left ${
-            openPanel === 'dates' ? 'bg-gray-100 dark:bg-gray-700' : 'hover:bg-gray-50 dark:hover:bg-gray-700/50'
+            openPanel === 'dates' ? 'bg-gray-100' : 'hover:bg-gray-50'
           }`}
         >
-          <label className="block text-xs font-bold text-[#0d141b] dark:text-white uppercase tracking-wider mb-0.5">
+          <label className="block text-xs font-bold text-[#0d141b] uppercase tracking-wider mb-0.5">
             Check in
           </label>
-          <div className={`text-sm ${checkIn ? 'text-gray-700 dark:text-gray-200' : 'text-gray-400'}`}>
+          <div className={`text-sm ${checkIn ? 'text-gray-700' : 'text-gray-400'}`}>
             {checkIn ? formatDate(checkIn) : 'Add dates'}
           </div>
         </div>
 
         <div
           onClick={() => setOpenPanel(openPanel === 'dates' ? null : 'dates')}
-          className={`relative w-full md:w-[140px] px-8 py-4 md:px-6 md:py-3 md:rounded-full cursor-pointer transition-colors group text-left border-l border-gray-200 dark:border-gray-700 md:border-l-0 ${
-            openPanel === 'dates' ? 'bg-gray-100 dark:bg-gray-700' : 'hover:bg-gray-50 dark:hover:bg-gray-700/50'
+          className={`relative w-full md:w-[140px] px-8 py-4 md:px-6 md:py-3 md:rounded-full cursor-pointer transition-colors group text-left border-l border-gray-200 md:border-l-0 ${
+            openPanel === 'dates' ? 'bg-gray-100' : 'hover:bg-gray-50'
           }`}
         >
-          <label className="block text-xs font-bold text-[#0d141b] dark:text-white uppercase tracking-wider mb-0.5">
+          <label className="block text-xs font-bold text-[#0d141b] uppercase tracking-wider mb-0.5">
             Check out
           </label>
-          <div className={`text-sm ${checkOut ? 'text-gray-700 dark:text-gray-200' : 'text-gray-400'}`}>
+          <div className={`text-sm ${checkOut ? 'text-gray-700' : 'text-gray-400'}`}>
             {checkOut ? formatDate(checkOut) : 'Add dates'}
           </div>
         </div>
@@ -127,14 +127,14 @@ const ShortTermSearchBar = ({ onSearch, initialKeyword = '' }) => {
       {/* Guests & Search Button */}
       <div className="relative flex-1 w-full" ref={guestRef}>
         <div
-          className="pl-8 pr-3 py-3 md:pl-6 md:pr-2 md:py-2 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-700/50 md:rounded-full cursor-pointer transition-colors text-left"
+          className="pl-8 pr-3 py-3 md:pl-6 md:pr-2 md:py-2 flex items-center justify-between hover:bg-gray-50 md:rounded-full cursor-pointer transition-colors text-left"
           onClick={() => setOpenPanel(openPanel === 'guests' ? null : 'guests')}
         >
           <div className="flex flex-col">
-            <label className="block text-xs font-bold text-[#0d141b] dark:text-white uppercase tracking-wider mb-0.5">
+            <label className="block text-xs font-bold text-[#0d141b] uppercase tracking-wider mb-0.5">
               Who
             </label>
-            <div className={`text-sm ${guests.adults > 0 || guests.children > 0 ? 'text-gray-700 dark:text-gray-200' : 'text-gray-400'} truncate max-w-[120px]`}>
+            <div className={`text-sm ${guests.adults > 0 || guests.children > 0 ? 'text-gray-700' : 'text-gray-400'} truncate max-w-[120px]`}>
               {formatGuests()}
             </div>
           </div>

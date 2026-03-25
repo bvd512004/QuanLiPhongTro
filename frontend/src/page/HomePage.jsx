@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Hero from '@/app/component/home/Hero.jsx';
-import ListingCard from '@/app/component/home/ListingCard.jsx';
+import Hero from '../app/component/home/Hero.jsx';
+import ListingCard from '../app/component/home/ListingCard.jsx';
 import { api } from '@/services/api';
 
 const HomePage = () => {
@@ -14,11 +14,8 @@ const HomePage = () => {
   useEffect(() => {
     const fetchHotProperties = async () => {
       setLoading(true);
-      try {
-        // Thử lấy danh sách nổi bật trước
+      try { 
         let response = await api.getFeaturedProperties(16);
-
-        // Fallback: Nếu không có dữ liệu nổi bật, lấy tất cả
         if (!response.success || !response.data || response.data.length === 0) {
           console.log('No featured properties, fetching all properties...');
           const allPropertiesResponse = await api.filterProperties({}, 0, 16);
@@ -33,22 +30,23 @@ const HomePage = () => {
         }
 
         if (response.success && response.data) {
-          const allProperties = response.data.map((p) => ({
-            id: String(p.id),
-            image: p.primaryImageUrl || p.images?.[0]?.imageUrl || '',
-            location: `${p.city}, ${p.country}`,
-            details: `${p.propertyType} • ${p.bedrooms} bedrooms • ${p.maxGuests} guests`,
-            dates: 'Available now',
-            rating: p.averageRating || 0,
-            price: p.pricePerNight,
-            rentalType: p.rentalType || 'SHORT_TERM',
-            pricePerMonth: p.pricePerMonth || 0,
-            isGuestFavorite: p.isFeatured,
-          }));
+          const allProperties = response.data.map((p) => {
+            const prettyType = p.propertyType
+              ? p.propertyType.replace(/_/g, ' ').toLowerCase()
+              : '';
 
-          // Phân loại
-          const longTerm = allProperties.filter((p) => p.rentalType === 'LONG_TERM').slice(0, 8);
-          const shortTerm = allProperties.filter((p) => p.rentalType === 'SHORT_TERM' || !p.rentalType).slice(0, 4);
+            return {
+              id: String(p.id),
+              image: p.primaryImageUrl || '',
+              location: [p.city, p.country].filter(Boolean).join(', '),
+              details: `${prettyType} • ${p.bedrooms || 0} phòng ngủ • ${p.maxGuests || 0} khách`,
+              dates: 'Available now',
+              rating: p.averageRating || 0,
+              price: p.pricePerNight,
+              isGuestFavorite: p.isFeatured,
+            };
+          });
+          const shortTerm = allProperties.slice(0, 12);
 
           setHotLongTermProperties(longTerm);
           setHotShortTermProperties(shortTerm);
@@ -63,7 +61,6 @@ const HomePage = () => {
     fetchHotProperties();
   }, []);
 
-  // Xử lý tìm kiếm
   const handleSearch = (criteria) => {
     const params = new URLSearchParams();
     
@@ -95,7 +92,7 @@ const HomePage = () => {
         <section className="mb-16">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h2 className="text-3xl font-bold text-[#0d141b] dark:text-white flex items-center gap-2">
+              <h2 className="text-3xl font-bold text-[#0d141b] flex items-center gap-2">
                 <span className="material-symbols-outlined !text-[32px] text-red-500 filled">local_fire_department</span>
                 Phòng trọ HOT tháng này
               </h2>
@@ -108,7 +105,7 @@ const HomePage = () => {
           {loading ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
               {Array.from({ length: 8 }).map((_, i) => (
-                <div key={`skeleton-long-${i}`} className="animate-pulse bg-gray-200 dark:bg-gray-700 h-64 rounded-xl" />
+                <div key={`skeleton-long-${i}`} className="animate-pulse bg-gray-200 h-64 rounded-xl" />
               ))}
             </div>
           ) : (
@@ -122,7 +119,7 @@ const HomePage = () => {
         <section>
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h2 className="text-3xl font-bold text-[#0d141b] dark:text-white flex items-center gap-2">
+              <h2 className="text-3xl font-bold text-[#0d141b] flex items-center gap-2">
                 <span className="material-symbols-outlined !text-[32px] text-yellow-500 filled">star</span>
                 Căn hộ nổi bật
               </h2>
@@ -135,7 +132,7 @@ const HomePage = () => {
           {loading ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
               {Array.from({ length: 4 }).map((_, i) => (
-                <div key={`skeleton-short-${i}`} className="animate-pulse bg-gray-200 dark:bg-gray-700 h-64 rounded-xl" />
+                <div key={`skeleton-short-${i}`} className="animate-pulse bg-gray-200 h-64 rounded-xl" />
               ))}
             </div>
           ) : (

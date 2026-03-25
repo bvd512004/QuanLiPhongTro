@@ -14,7 +14,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserResponse {
-
+    
     private Long id;
     private String email;
     private String firstName;
@@ -32,3 +32,4 @@ public class UserResponse {
     private Set<String> roles;
     private LocalDateTime createdAt;
 }
+
