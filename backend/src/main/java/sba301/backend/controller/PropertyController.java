@@ -2,10 +2,7 @@ package sba301.backend.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
@@ -41,6 +38,12 @@ public class PropertyController {
             @RequestParam(defaultValue = "8") int limit) {
         List<PropertyResponse> properties = propertyService.getFeaturedProperties(limit);
         return ResponseEntity.ok(ApiResponse.success(properties));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ApiResponse<PropertyResponse>> getPropertyById(@PathVariable Long id) {
+        PropertyResponse property = propertyService.getPropertyById(id);
+        return ResponseEntity.ok(ApiResponse.success(property));
     }
 
 }
