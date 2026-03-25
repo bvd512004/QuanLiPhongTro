@@ -7,6 +7,7 @@ import ProfilePage from "../app/component/home/ProfilePage";
 import UpdateProfilePage from "../page/UpdateProfilePage";
 import ListingPage from "../page/ListingPage";
 import CheckoutPage from "../page/CheckoutPage";
+import AdminPropertyModerationPage from "../feature/admin/pages/AdminPropertyModerationPage";
 const publicRoutes = [
     
     {
@@ -36,6 +37,14 @@ const publicRoutes = [
         element: <Layout />,
         children: [
             { index: true, element: <HomePage /> },
+        ],
+    }
+    ,
+    {
+        path: "/admin/properties/moderation",
+        element: <Layout />,
+        children: [
+            { index: true, element: <AdminPropertyModerationPage /> },
         ],
     }
     ,
