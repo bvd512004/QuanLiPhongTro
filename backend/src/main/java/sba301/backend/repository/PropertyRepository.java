@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.EntityGraph;
 
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -14,6 +15,7 @@ import sba301.backend.entity.Property;
 import sba301.backend.enums.PropertyStatus;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @Repository
@@ -95,6 +97,9 @@ public interface PropertyRepository extends JpaRepository<Property, Long>, JpaSp
     Long countByHostId(Long hostId);
 
     Page<Property> findByStatus(PropertyStatus status, Pageable pageable);
+
+    @EntityGraph(attributePaths = {"host", "amenities", "category"})
+    Optional<Property> findWithDetailsById(Long id);
 
 }
 

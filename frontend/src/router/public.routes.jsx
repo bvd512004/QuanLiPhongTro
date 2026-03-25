@@ -4,6 +4,9 @@ import HomePage from "../page/HomePage";
 import LoginPage from "../page/LoginPage";
 import RegisterPage from "../page/RegisterPage";
 import AdminPropertyModerationPage from "../feature/admin/pages/AdminPropertyModerationPage";
+import AdminPropertyDetailPage from "../feature/admin/pages/AdminPropertyDetailPage";
+import AdminDashboardPage from "../feature/admin/pages/AdminDashboardPage";
+import AdminUserManagementPage from "../feature/admin/pages/AdminUserManagementPage";
 const publicRoutes = [
     
     {
@@ -41,6 +44,29 @@ const publicRoutes = [
         element: <Layout />,
         children: [
             { index: true, element: <AdminPropertyModerationPage /> },
+        ],
+    }
+    ,
+    {
+        path: "/admin/properties/moderation/:id",
+        element: <Layout />,
+        children: [
+            { index: true, element: <AdminPropertyDetailPage /> },
+        ],
+    }
+    ,
+    {
+        path: "/admin/dashboard",
+        element: <Layout />,
+        children: [
+            { index: true, element: <AdminDashboardPage /> },
+        ],
+    },
+    {
+        path: "/admin/users",
+        element: <Layout />,
+        children: [
+            { index: true, element: <AdminUserManagementPage /> },
         ],
     }
 ];

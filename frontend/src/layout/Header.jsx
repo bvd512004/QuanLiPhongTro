@@ -1,18 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-// import { useAuth } from '../contexts/AuthContext';
-
-// Tạm thời mock useAuth để không phụ thuộc AuthContext thật
-const useAuth = () => ({
-  user: null,
-  isAuthenticated: false,
-  logout: () => {},
-});
+import { AuthActionsContext, AuthStateContext } from '../providers/AuthProvider';
 
 const Header = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { user, isAuthenticated, logout } = useAuth();
+  const { user } = useContext(AuthStateContext);
+  const { logout } = useContext(AuthActionsContext);
+  const isAuthenticated = !!user;
   
   const [walletBalance, setWalletBalance] = useState(0);
   const [loadingWallet, setLoadingWallet] = useState(false);
@@ -63,7 +58,7 @@ const Header = () => {
     if (isAdminMode) {
       navigate('/');
     } else {
-      navigate('/admin/dashboard');
+      navigate('/admin/properties/moderation');
     }
   };
 

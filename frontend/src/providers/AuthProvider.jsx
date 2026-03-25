@@ -10,7 +10,7 @@ const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const initUser = async () => {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("token") || localStorage.getItem("accessToken");
 
       if (token) {
         try {
@@ -24,6 +24,7 @@ const AuthProvider = ({ children }) => {
         } catch (err) {
           console.log("Token invalid");
           localStorage.removeItem("token");
+          localStorage.removeItem("accessToken");
         }
       }
     };
@@ -38,6 +39,7 @@ const AuthProvider = ({ children }) => {
   const logout = () => {
     setUser(null);
     localStorage.removeItem("token");
+    localStorage.removeItem("accessToken");
     window.location.href = "/";
   };
 
