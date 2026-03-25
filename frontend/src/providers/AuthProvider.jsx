@@ -1,32 +1,53 @@
-import React, { createContext, useState } from 'react'
-// Step 1:
+import React, { createContext, useState, useEffect } from "react";
+import { getCurrentUser } from "@/services/authService";
+
 export const AuthStateContext = createContext(null);
 export const AuthActionsContext = createContext(null);
-const AuthProvider = ({children}) => {
-    const [user, setUser] = useState(null);
 
-    const login = (payload) =>{
-        console.log(payload);
-        setUser(payload);
-    }
+const AuthProvider = ({ children }) => {
 
-    const logout = ()=>{
-        setUser(null);
-        localStorage.removeItem("accessToken");
+  const [user, setUser] = useState(null);
 
-        window.location.href = "/";
-    }
+  useEffect(() => {
+    const initUser = async () => {
+      const token = localStorage.getItem("token");
 
-    const stateValues = {user};
-    const actionValues = {login, logout}
+      if (token) {
+        try {
+          const userData = await getCurrentUser();
 
-    return (
-        <AuthStateContext value={stateValues}>
-            <AuthActionsContext value={actionValues}>
-                {children}
-            </AuthActionsContext>
-        </AuthStateContext>
-    )
-}
+          setUser({
+            ...userData,
+            token
+          });
+
+        } catch (err) {
+          console.log("Token invalid");
+          localStorage.removeItem("token");
+        }
+      }
+    };
+
+    initUser();
+  }, []);
+
+  const login = (userData) => {
+    setUser(userData);
+  };
+
+  const logout = () => {
+    setUser(null);
+    localStorage.removeItem("token");
+    window.location.href = "/";
+  };
+
+  return (
+    <AuthStateContext.Provider value={{ user }}>
+      <AuthActionsContext.Provider value={{ login, logout }}>
+        {children}
+      </AuthActionsContext.Provider>
+    </AuthStateContext.Provider>
+  );
+};
 
 export default AuthProvider;

@@ -3,19 +3,25 @@ import { useNavigate } from 'react-router-dom';
 import Hero from '../app/component/home/Hero.jsx';
 import ListingCard from '../app/component/home/ListingCard.jsx';
 import { api } from '@/services/api';
+import { AuthStateContext, AuthActionsContext } from "@/app/providers/AuthProvider";
 
 const HomePage = () => {
   const navigate = useNavigate();
+
   const [hotLongTermProperties, setHotLongTermProperties] = useState([]);
   const [hotShortTermProperties, setHotShortTermProperties] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Fetch dữ liệu khi trang được tải
+  const { user } = useContext(AuthStateContext);
+  const { logout } = useContext(AuthActionsContext);
+
+  // fetch properties
   useEffect(() => {
     const fetchHotProperties = async () => {
       setLoading(true);
-      try { 
+      try {
         let response = await api.getFeaturedProperties(16);
+
         if (!response.success || !response.data || response.data.length === 0) {
           console.log('No featured properties, fetching all properties...');
           const allPropertiesResponse = await api.filterProperties({}, 0, 16);
@@ -23,36 +29,36 @@ const HomePage = () => {
             response = {
               timestamp: Date.now().toString(),
               success: true,
-              data: allPropertiesResponse.data.content,
-              message: 'Properties loaded'
+              data: allPropertiesResponse.data.content
             };
           }
         }
 
         if (response.success && response.data) {
-          const allProperties = response.data.map((p) => {
-            const prettyType = p.propertyType
-              ? p.propertyType.replace(/_/g, ' ').toLowerCase()
-              : '';
+          const allProperties = response.data.map((p) => ({
+            id: String(p.id),
+            image: p.primaryImageUrl || p.images?.[0]?.imageUrl || '',
+            location: `${p.city}, ${p.country}`,
+            details: `${p.propertyType} • ${p.bedrooms} bedrooms • ${p.maxGuests} guests`,
+            dates: 'Available now',
+            rating: p.averageRating || 0,
+            price: p.pricePerNight,
+            rentalType: p.rentalType || 'SHORT_TERM',
+            pricePerMonth: p.pricePerMonth || 0,
+            isGuestFavorite: p.isFeatured,
+          }));
 
-            return {
-              id: String(p.id),
-              image: p.primaryImageUrl || '',
-              location: [p.city, p.country].filter(Boolean).join(', '),
-              details: `${prettyType} • ${p.bedrooms || 0} phòng ngủ • ${p.maxGuests || 0} khách`,
-              dates: 'Available now',
-              rating: p.averageRating || 0,
-              price: p.pricePerNight,
-              isGuestFavorite: p.isFeatured,
-            };
-          });
-          const shortTerm = allProperties.slice(0, 12);
+          // Phân loại
+          const longTerm = allProperties.filter((p) => p.rentalType === 'LONG_TERM').slice(0, 8);
+          const shortTerm = allProperties.filter((p) => p.rentalType === 'SHORT_TERM' || !p.rentalType).slice(0, 4);
 
-          setHotLongTermProperties(longTerm);
-          setHotShortTermProperties(shortTerm);
+          setHotShortTermProperties(
+            allProperties.filter(p => p.rentalType === 'SHORT_TERM').slice(0, 4)
+          );
         }
+
       } catch (error) {
-        console.error('Failed to fetch hot properties:', error);
+        console.error(error);
       } finally {
         setLoading(false);
       }
@@ -61,6 +67,7 @@ const HomePage = () => {
     fetchHotProperties();
   }, []);
 
+  // search
   const handleSearch = (criteria) => {
     const params = new URLSearchParams();
     
@@ -84,7 +91,55 @@ const HomePage = () => {
   };
 
   return (
-    <div className="page-transition">
+    <div>
+
+      {/* HEADER */}
+      <header className="flex justify-between items-center px-8 py-4 shadow-sm bg-white">
+        <h1 className="text-xl font-bold">StayFinder</h1>
+
+        <div className="flex gap-4 items-center">
+
+          {user ? (
+            <>
+              <span className="font-semibold">
+                {user.email || "User"}
+              </span>
+
+              <Link
+                to="/profile"
+                className="px-4 py-2 bg-green-500 text-white rounded-lg"
+              >
+                Profile
+              </Link>
+
+              <button
+                onClick={logout}
+                className="px-4 py-2 bg-red-500 text-white rounded-lg"
+              >
+                Logout
+              </button>
+            </>
+          ) : (
+            <>
+              <Link
+                to="/login"
+                className="px-4 py-2 bg-blue-500 text-white rounded-lg"
+              >
+                Login
+              </Link>
+
+              <Link
+                to="/register"
+                className="px-4 py-2 border border-blue-500 text-blue-500 rounded-lg"
+              >
+                Register
+              </Link>
+            </>
+          )}
+
+        </div>
+      </header>
+
       <Hero onSearch={handleSearch} defaultMode="long-term" />
 
       <div className="mx-auto max-w-[1440px] px-4 sm:px-8 lg:px-12 py-12">
@@ -92,7 +147,7 @@ const HomePage = () => {
         <section className="mb-16">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h2 className="text-3xl font-bold text-[#0d141b] flex items-center gap-2">
+              <h2 className="text-3xl font-bold text-[#0d141b] dark:text-white flex items-center gap-2">
                 <span className="material-symbols-outlined !text-[32px] text-red-500 filled">local_fire_department</span>
                 Phòng trọ HOT tháng này
               </h2>
@@ -105,7 +160,7 @@ const HomePage = () => {
           {loading ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
               {Array.from({ length: 8 }).map((_, i) => (
-                <div key={`skeleton-long-${i}`} className="animate-pulse bg-gray-200 h-64 rounded-xl" />
+                <div key={`skeleton-long-${i}`} className="animate-pulse bg-gray-200 dark:bg-gray-700 h-64 rounded-xl" />
               ))}
             </div>
           ) : (
@@ -119,7 +174,7 @@ const HomePage = () => {
         <section>
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h2 className="text-3xl font-bold text-[#0d141b] flex items-center gap-2">
+              <h2 className="text-3xl font-bold text-[#0d141b] dark:text-white flex items-center gap-2">
                 <span className="material-symbols-outlined !text-[32px] text-yellow-500 filled">star</span>
                 Căn hộ nổi bật
               </h2>
@@ -132,7 +187,7 @@ const HomePage = () => {
           {loading ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
               {Array.from({ length: 4 }).map((_, i) => (
-                <div key={`skeleton-short-${i}`} className="animate-pulse bg-gray-200 h-64 rounded-xl" />
+                <div key={`skeleton-short-${i}`} className="animate-pulse bg-gray-200 dark:bg-gray-700 h-64 rounded-xl" />
               ))}
             </div>
           ) : (
