@@ -15,16 +15,16 @@ import java.util.stream.Collectors;
 
 @Component
 public class PropertyMapper {
-    
+
     private final UserMapper userMapper;
-    
+
     public PropertyMapper(UserMapper userMapper) {
         this.userMapper = userMapper;
     }
-    
+
     public PropertyResponse toResponse(Property property) {
         if (property == null) return null;
-        
+
         return PropertyResponse.builder()
                 .id(property.getId())
                 .title(property.getTitle())
@@ -70,10 +70,10 @@ public class PropertyMapper {
                 .updatedAt(property.getUpdatedAt())
                 .build();
     }
-    
+
     public CategoryResponse toCategoryResponse(Category category) {
         if (category == null) return null;
-        
+
         return CategoryResponse.builder()
                 .id(category.getId())
                 .name(category.getName())
@@ -84,10 +84,10 @@ public class PropertyMapper {
                 .displayOrder(category.getDisplayOrder())
                 .build();
     }
-    
+
     public AmenityResponse toAmenityResponse(Amenity amenity) {
         if (amenity == null) return null;
-        
+
         return AmenityResponse.builder()
                 .id(amenity.getId())
                 .name(amenity.getName())
@@ -96,10 +96,10 @@ public class PropertyMapper {
                 .category(amenity.getCategory())
                 .build();
     }
-    
+
     public PropertyImageResponse toImageResponse(PropertyImage image) {
         if (image == null) return null;
-        
+
         return PropertyImageResponse.builder()
                 .id(image.getId())
                 .imageUrl(image.getImageUrl())
@@ -112,4 +112,3 @@ public class PropertyMapper {
                 .build();
     }
 }
-

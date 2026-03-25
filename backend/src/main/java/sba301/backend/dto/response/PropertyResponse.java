@@ -1,6 +1,5 @@
 package sba301.backend.dto.response;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,12 +12,11 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
+@AllArgsConstructor
+@NoArgsConstructor
 @Data
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class PropertyResponse {
-    
     private Long id;
     private String title;
     private String description;
@@ -31,9 +29,7 @@ public class PropertyResponse {
     private BigDecimal latitude;
     private BigDecimal longitude;
 
-    // Short-term rental pricing
     private BigDecimal pricePerNight;
-    // Long-term rental pricing
     private BigDecimal cleaningFee;
     private BigDecimal serviceFee;
     private Integer maxGuests;

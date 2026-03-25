@@ -147,10 +147,6 @@ public class Property extends BaseEntity {
     @Builder.Default
     private List<Favorite> favorites = new ArrayList<>();
 
-    @OneToMany(mappedBy = "property", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Builder.Default
-    private List<PropertyPackageSubscription> packageSubscriptions = new ArrayList<>();
-
     // Helper methods
     public void addImage(PropertyImage image) {
         images.add(image);
@@ -165,3 +161,4 @@ public class Property extends BaseEntity {
             .orElse(images.isEmpty() ? null : images.get(0).getImageUrl());
     }
 }
+
