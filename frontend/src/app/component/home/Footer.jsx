@@ -22,7 +22,6 @@ function Footer() {
           <h3 className="text-white font-semibold mb-3">Quick Links</h3>
           <ul className="space-y-2 text-sm">
             <li><Link to="/" className="hover:text-white">Home</Link></li>
-            <li><Link to="/long-term-listings" className="hover:text-white">Long Term</Link></li>
             <li><Link to="/short-term-listings" className="hover:text-white">Short Term</Link></li>
             <li><Link to="/profile" className="hover:text-white">Profile</Link></li>
           </ul>

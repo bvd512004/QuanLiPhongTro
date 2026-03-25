@@ -177,8 +177,8 @@ const Header = () => {
               <div className="py-2">
                 {!isAuthenticated ? (
                   <>
-                    <Link to="/auth" className="block px-4 py-2 text-sm hover:bg-gray-100">Đăng nhập</Link>
-                    <Link to="/auth" className="block px-4 py-2 text-sm hover:bg-gray-100">Đăng ký</Link>
+                    <Link to="/login" className="block px-4 py-2 text-sm hover:bg-gray-100">Đăng nhập</Link>
+                    <Link to="/register" className="block px-4 py-2 text-sm hover:bg-gray-100">Đăng ký</Link>
                   </>
                 ) : (
                   <>
