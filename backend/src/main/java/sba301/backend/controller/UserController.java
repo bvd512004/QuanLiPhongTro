@@ -6,8 +6,9 @@ import sba301.backend.constants.ApiPath;
 import sba301.backend.dto.request.UpdateUserRequest;
 import sba301.backend.dto.response.ApiResponse;
 import sba301.backend.dto.response.UserResponse;
+import sba301.backend.mapper.UserMapper;
 import sba301.backend.service.UserService;
-import sba301.backend.utils.UserMapper;
+
 
 @RestController
 @RequestMapping(ApiPath.USER)
