@@ -1,4 +1,8 @@
 package sba301.backend.service;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,7 +17,6 @@ import sba301.backend.repository.UserRepository;
 import sba301.backend.mapper.UserMapper;
 
 @Service
-@RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Slf4j
 public class UserService {
@@ -39,7 +42,7 @@ public class UserService {
     @Transactional
     public UserResponse updateProfile(UpdateUserRequest request) {
 
-        // 🔥 lấy user từ token
+
         User user = getCurrentUser();
 
         if (request.getFirstName() != null) user.setFirstName(request.getFirstName());

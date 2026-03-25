@@ -3,6 +3,14 @@ import { Link, useSearchParams } from 'react-router-dom';
 
 const ListingCard = ({ listing }) => {
   const [searchParams] = useSearchParams();
+  // Fallback nội bộ để tránh phụ thuộc vào dịch vụ placeholder bên ngoài (có thể bị chặn/DNS fail).
+  const fallbackImage = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(
+    `<svg xmlns="http://www.w3.org/2000/svg" width="300" height="200" viewBox="0 0 300 200">
+      <rect width="300" height="200" fill="#e5e7eb"/>
+      <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle"
+        font-family="Arial, Helvetica, sans-serif" font-size="16" fill="#6b7280">No Image</text>
+    </svg>`
+  )}`;
 
   // Xây dựng URL với các tiêu chí tìm kiếm hiện tại
   const buildListingUrl = () => {
@@ -38,9 +46,9 @@ const ListingCard = ({ listing }) => {
         <img
           alt={listing.location}
           className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-          src={listing.image || 'https://via.placeholder.com/300x200?text=No+Image'}
+          src={listing.image || fallbackImage}
           onError={(e) => {
-            e.target.src = 'https://via.placeholder.com/300x200?text=No+Image';
+            e.target.src = fallbackImage;
           }}
         />
         <button 

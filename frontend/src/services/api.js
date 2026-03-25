@@ -53,7 +53,7 @@ export const api = {
   // GET /api/v1/properties?featured=true&limit=...
   getFeaturedProperties: async (limit = 6) => {
     try {
-      const response = await axiosClient.get('api/v1/properties/featured', { params: { limit } });
+      const response = await axiosClient.get('/properties/featured', { params: { limit } });
       // backend: { success, message, data: [...] }
       const payload = response.data;
       return {
@@ -69,8 +69,7 @@ export const api = {
   filterProperties: async (filters = {}, page = 0, size = 10) => {
     try {
       const params = { ...filters, page, size };
-      const response = await axiosClient.get('api/v1/properties', { params });
-      // tuỳ backend, nếu cũng bọc kiểu { success, data: { content: [...] } } thì xử lý tương tự
+      const response = await axiosClient.get('/properties', { params });
       const payload = response.data;
       console.log('Filtered properties response:', payload);
       return { success: true, data: payload };
