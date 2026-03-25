@@ -13,7 +13,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PageResponse<T> {
-
     private List<T> items;
     private int page;
     private int size;
@@ -29,5 +28,13 @@ public class PageResponse<T> {
                 .totalPages(page.getTotalPages())
                 .build();
     }
+    public static <T, R> PageResponse<R> from(Page<T> page, List<R> content) {
+        return PageResponse.<R>builder()
+                .items(content)
+                .page(page.getNumber())
+                .size(page.getSize())
+                .totalItems(page.getTotalElements())
+                .totalPages(page.getTotalPages())
+                .build();
+    }
 }
-

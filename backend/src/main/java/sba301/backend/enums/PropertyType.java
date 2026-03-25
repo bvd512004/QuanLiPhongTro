@@ -1,9 +1,16 @@
 package sba301.backend.enums;
 
 public enum PropertyType {
-    PHONG_TRO,
-    NHA_NGUYEN_CAN,
-    CAN_HO,
-    KHO_XUONG, // Mở rộng
-    VAN_PHONG // Mở rộng
+    HOUSE,
+    APARTMENT,
+    VILLA,
+    CONDO,
+    TOWNHOUSE,
+    CABIN,
+    COTTAGE,
+    STUDIO,
+    LOFT,
+    PENTHOUSE,
+    FARMHOUSE,
+    OTHER
 }

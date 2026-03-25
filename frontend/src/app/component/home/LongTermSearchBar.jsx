@@ -46,17 +46,17 @@ const LongTermSearchBar = ({ onSearch, initialKeyword = '' }) => {
   };
 
   return (
-    <div className="w-full max-w-[900px] bg-white dark:bg-gray-800 rounded-[32px] md:rounded-full shadow-xl p-2 relative">
+    <div className="w-full max-w-[900px] bg-white rounded-[32px] md:rounded-full shadow-xl p-2 relative">
       <div className="flex flex-col md:flex-row items-stretch md:items-center gap-2">
         {/* Location Input */}
-        <div className="flex-1 px-6 py-3 hover:bg-gray-50 dark:hover:bg-gray-700/50 rounded-full cursor-pointer transition-colors group">
-          <label className="block text-xs font-bold text-[#0d141b] dark:text-white uppercase tracking-wider mb-0.5">
+        <div className="flex-1 px-6 py-3 hover:bg-gray-50 rounded-full cursor-pointer transition-colors group">
+          <label className="block text-xs font-bold text-[#0d141b] uppercase tracking-wider mb-0.5">
             Địa điểm
           </label>
           <div className="flex items-center gap-2">
             <span className="material-symbols-outlined !text-[20px] text-gray-400">location_on</span>
             <input
-              className="w-full border-none p-0 text-sm bg-transparent focus:ring-0 placeholder:text-gray-400 text-gray-700 dark:text-gray-200 focus:outline-none"
+              className="w-full border-none p-0 text-sm bg-transparent focus:ring-0 placeholder:text-gray-400 text-gray-700 focus:outline-none"
               placeholder="Bạn muốn thuê trọ ở đâu?"
               type="text"
               value={location}
@@ -67,8 +67,8 @@ const LongTermSearchBar = ({ onSearch, initialKeyword = '' }) => {
         </div>
 
         {/* Price Range Select */}
-        <div className="relative px-6 py-3 hover:bg-gray-50 dark:hover:bg-gray-700/50 rounded-full cursor-pointer transition-colors group min-w-[180px]">
-          <label className="block text-xs font-bold text-[#0d141b] dark:text-white uppercase tracking-wider mb-0.5">
+        <div className="relative px-6 py-3 hover:bg-gray-50 rounded-full cursor-pointer transition-colors group min-w-[180px]">
+          <label className="block text-xs font-bold text-[#0d141b] uppercase tracking-wider mb-0.5">
             Mức giá
           </label>
           <div className="flex items-center gap-2">
@@ -76,7 +76,7 @@ const LongTermSearchBar = ({ onSearch, initialKeyword = '' }) => {
             <select
               value={priceRange}
               onChange={(e) => setPriceRange(e.target.value)}
-              className="w-full border-none p-0 text-sm bg-transparent focus:ring-0 text-gray-700 dark:text-gray-200 focus:outline-none cursor-pointer appearance-none pr-6"
+              className="w-full border-none p-0 text-sm bg-transparent focus:ring-0 text-gray-700 focus:outline-none cursor-pointer appearance-none pr-6"
             >
               {priceRanges.map((range) => (
                 <option key={range.value} value={range.value}>
@@ -88,8 +88,8 @@ const LongTermSearchBar = ({ onSearch, initialKeyword = '' }) => {
         </div>
 
         {/* Room Type Select */}
-        <div className="relative px-6 py-3 hover:bg-gray-50 dark:hover:bg-gray-700/50 rounded-full cursor-pointer transition-colors group min-w-[180px]">
-          <label className="block text-xs font-bold text-[#0d141b] dark:text-white uppercase tracking-wider mb-0.5">
+        <div className="relative px-6 py-3 hover:bg-gray-50 rounded-full cursor-pointer transition-colors group min-w-[180px]">
+          <label className="block text-xs font-bold text-[#0d141b] uppercase tracking-wider mb-0.5">
             Loại phòng
           </label>
           <div className="flex items-center gap-2">
@@ -97,7 +97,7 @@ const LongTermSearchBar = ({ onSearch, initialKeyword = '' }) => {
             <select
               value={roomType}
               onChange={(e) => setRoomType(e.target.value)}
-              className="w-full border-none p-0 text-sm bg-transparent focus:ring-0 text-gray-700 dark:text-gray-200 focus:outline-none cursor-pointer appearance-none pr-6"
+              className="w-full border-none p-0 text-sm bg-transparent focus:ring-0 text-gray-700 focus:outline-none cursor-pointer appearance-none pr-6"
             >
               {roomTypes.map((type) => (
                 <option key={type.value} value={type.value}>
