@@ -2,7 +2,56 @@ import axiosClient from '../shared/services/axiosClient';
 
 
 export const api = {
-  getFeaturedProperties: async (limit) => {
+
+    // LOGIN
+  login: async (email, password) => {
+    try {
+
+      const response = await axiosClient.post("/auth/login", {
+        email,
+        password
+      });
+
+      return {
+        success: true,
+        data: response.data.data
+      };
+
+    } catch (error) {
+
+      console.error("Login error", error);
+
+      return {
+        success: false
+      };
+
+    }
+  },
+
+
+  // REGISTER
+  register: async (data) => {
+    try {
+
+      const response = await axiosClient.post("/auth/register", data);
+
+      return {
+        success: true,
+        data: response.data.data
+      };
+
+    } catch (error) {
+
+      console.error("Register error", error);
+
+      return {
+        success: false
+      };
+
+    }
+  },
+  // GET /api/v1/properties?featured=true&limit=...
+  getFeaturedProperties: async (limit = 6) => {
     try {
       const response = await axiosClient.get('api/v1/properties/featured', { params: { limit } });
       // backend: { success, message, data: [...] }

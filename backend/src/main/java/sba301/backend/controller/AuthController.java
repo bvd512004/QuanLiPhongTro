@@ -1,6 +1,5 @@
 package sba301.backend.controller;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
+
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -17,7 +16,7 @@ import sba301.backend.service.AuthService;
 @Slf4j
 @RestController
 @RequestMapping(ApiPath.AUTH)
-@Tag(name = "Authentication", description = "Authentication API")
+//@Tag(name = "Authentication", description = "Authentication API")
 public class AuthController {
 
     private final AuthService authService;
@@ -27,7 +26,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    @Operation(summary = "Login user")
+    //@Operation(summary = "Login user")
     public ResponseEntity<ApiResponse<AuthResponse>> login(@Valid @RequestBody LoginRequest request) {
         AuthResponse response = authService.login(request);
         log.info("User {} logged in successfully", request.getEmail());
@@ -35,7 +34,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    @Operation(summary = "Register user")
+    //@Operation(summary = "Register user")
     public ResponseEntity<ApiResponse<AuthResponse>> register(@Valid @RequestBody RegisterRequest request) {
         AuthResponse response = authService.register(request);
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -43,7 +42,7 @@ public class AuthController {
     }
 
     @GetMapping("/me")
-    @Operation(summary = "Get current user")
+    //@Operation(summary = "Get current user")
     public ResponseEntity<ApiResponse<UserResponse>> getCurrentUser() {
         UserResponse user = authService.getCurrentUser();
         return ResponseEntity.ok(ApiResponse.success(user));
