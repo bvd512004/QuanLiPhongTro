@@ -27,7 +27,6 @@ public class AdminDashboardService {
         long totalProperties = propertyRepository.count();
         long activeProperties = propertyRepository.countByStatus(PropertyStatus.ACTIVE);
         long inactiveProperties = propertyRepository.countByStatus(PropertyStatus.INACTIVE);
-        long pendingProperties = propertyRepository.countByStatus(PropertyStatus.PENDING);
         long underReviewProperties = propertyRepository.countByStatus(PropertyStatus.UNDER_REVIEW);
         long rejectedProperties = propertyRepository.countByStatus(PropertyStatus.REJECTED);
 
@@ -38,7 +37,6 @@ public class AdminDashboardService {
                 .totalProperties(totalProperties)
                 .activeProperties(activeProperties)
                 .inactiveProperties(inactiveProperties)
-                .pendingProperties(pendingProperties)
                 .underReviewProperties(underReviewProperties)
                 .rejectedProperties(rejectedProperties)
                 .build();
