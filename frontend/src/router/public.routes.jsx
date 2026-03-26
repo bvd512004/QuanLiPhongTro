@@ -6,6 +6,10 @@ import LoginPage from "../page/LoginPage";
 import RegisterPage from "../page/RegisterPage";
 import AdminPropertyModerationPage from "../feature/admin/pages/AdminPropertyModerationPage";
 import UpdateProfilePage from "../page/UpdateProfilePage";
+import AdminDashboardPage from "../feature/admin/pages/AdminDashboardPage";
+import AdminUserManagementPage from "../feature/admin/pages/AdminUserManagementPage";
+import ListingPage from "../page/ListingPage";
+import CheckoutPage from "../page/CheckoutPage";
 const publicRoutes = [
     
     {

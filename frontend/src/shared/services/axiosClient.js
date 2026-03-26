@@ -8,12 +8,11 @@ const axiosClient = axios.create({
   },
 });
 
-
+// attach JWT token
 axiosClient.interceptors.request.use(
   (config) => {
-    const rawToken = localStorage.getItem("token");
-    const token = rawToken?.trim();
 
+    const token = localStorage.getItem("token");
 
     if (token && token !== "undefined" && token !== "null") {
       config.headers.Authorization = `Bearer ${token}`;
@@ -34,12 +33,16 @@ axiosClient.interceptors.response.use(
 
     console.error("API Error:", error.response?.data || error.message);
 
+    // 👉 Nếu token hết hạn thì logout luôn
     if (error.response?.status === 401) {
 
+      console.log("Unauthorized - maybe token expired");
+
+      // clear token
       localStorage.removeItem("token");
 
-
-
+      // redirect về login (nếu cần)
+      window.location.href = "/login";
     }
 
     return Promise.reject(error);
