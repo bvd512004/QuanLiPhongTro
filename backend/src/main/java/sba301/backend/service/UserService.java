@@ -21,15 +21,9 @@ import sba301.backend.mapper.UserMapper;
 @Slf4j
 public class UserService {
 
-    private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
-    private final UserMapper userMapper;
-
-    public UserService(UserRepository userRepository, RoleRepository roleRepository, UserMapper userMapper) {
-        this.userRepository = userRepository;
-        this.roleRepository = roleRepository;
-        this.userMapper = userMapper;
-    }
+    UserRepository userRepository;
+    RoleRepository roleRepository;
+    UserMapper userMapper;
 
 
     public UserResponse getUserById(Long id) {
@@ -41,7 +35,7 @@ public class UserService {
     @Transactional
     public UserResponse updateProfile(UpdateUserRequest request) {
 
-
+        // Get current authenticated user from security context.
         User user = getCurrentUser();
 
         if (request.getFirstName() != null) user.setFirstName(request.getFirstName());

@@ -19,9 +19,6 @@ public class PropertyDocument {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "property_id", nullable = false)
-    private Property property;
 
     @Column(name = "file_name", nullable = false)
     private String fileName; // Tên file gốc (VD: so-do-nha-mat-pho.pdf)
@@ -43,4 +40,8 @@ public class PropertyDocument {
     @CreationTimestamp
     @Column(name = "uploaded_at", updatable = false)
     private LocalDateTime uploadedAt; // Tự động lấy giờ hệ thống khi upload
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "property_id", nullable = false)
+    private Property property;
 }

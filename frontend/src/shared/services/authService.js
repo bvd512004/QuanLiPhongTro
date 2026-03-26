@@ -1,4 +1,4 @@
-import axiosClient from "../shared/services/axiosClient";
+import axiosClient from "./axiosClient.js";
 
 // LOGIN
 export const login = async (email, password) => {

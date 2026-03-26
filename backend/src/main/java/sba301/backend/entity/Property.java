@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale.Category;
 import java.util.Set;
 
 @Entity
@@ -96,8 +97,8 @@ public class Property extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", length = 20)
-    private PropertyStatus status = PropertyStatus.PENDING;
-
+    private PropertyStatus status = PropertyStatus.INACTIVE;
+    
     @Column(name = "is_instant_book")
     private Boolean isInstantBook = false;
 
@@ -127,9 +128,9 @@ public class Property extends BaseEntity {
     private List<PropertyImage> images = new ArrayList<>();
 
     @OneToMany(mappedBy = "property", cascade = CascadeType.ALL, orphanRemoval = true)
-    @OrderBy("uploadedAt DESC")
     @Builder.Default
-    private Set<PropertyDocument> documents = new LinkedHashSet<>();
+    @OrderBy("uploadedAt DESC")
+    private List<PropertyDocument> documents = new ArrayList<>();
 
     @Column(name = "reason",nullable = true)
     private String reason;
@@ -160,7 +161,11 @@ public class Property extends BaseEntity {
         images.add(image);
         image.setProperty(this);
     }
-
+    public void addDocument(PropertyDocument document) {
+        documents.add(document);
+        document.setProperty(this);
+    }
+    
     public String getPrimaryImageUrl() {
         return images.stream()
                 .filter(PropertyImage::getIsPrimary)

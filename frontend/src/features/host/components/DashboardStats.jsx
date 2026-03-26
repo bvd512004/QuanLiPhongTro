@@ -27,16 +27,16 @@ const DashboardStats = () => {
 
   if (loading) {
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         {new Array(4).fill(0).map((_, index) => (
-          <div key={`skeleton-${index}`} className="p-5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm animate-pulse">
+          <div key={`skeleton-${index}`} className="p-7 rounded-2xl bg-white border border-blue-100 shadow-[0_10px_28px_rgba(15,23,42,0.06)] animate-pulse">
             <div className="flex justify-between items-start mb-4">
-              <div className="p-2 rounded-lg bg-slate-200 dark:bg-slate-700 w-10 h-10"></div>
-              <div className="h-6 w-16 bg-slate-200 dark:bg-slate-700 rounded-full"></div>
+              <div className="p-2 rounded-xl bg-slate-200 w-10 h-10"></div>
+              <div className="h-6 w-16 bg-slate-200 rounded-full"></div>
             </div>
             <div className="flex flex-col gap-2">
-              <div className="h-8 w-24 bg-slate-200 dark:bg-slate-700 rounded"></div>
-              <div className="h-4 w-32 bg-slate-200 dark:bg-slate-700 rounded"></div>
+              <div className="h-8 w-24 bg-slate-200 rounded"></div>
+              <div className="h-4 w-32 bg-slate-200 rounded"></div>
             </div>
           </div>
         ))}
@@ -47,12 +47,12 @@ const DashboardStats = () => {
   if (error) {
     return (
       <div className="grid grid-cols-1 gap-4">
-        <div className="p-6 rounded-xl bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-800">
+        <div className="p-6 rounded-xl bg-red-50 border border-red-200">
           <div className="flex items-center gap-3 mb-2">
             <span className="material-symbols-outlined text-red-500">error</span>
-            <h3 className="font-semibold text-red-900 dark:text-red-200">Lỗi tải thống kê</h3>
+            <h3 className="font-semibold text-red-900">Lỗi tải thống kê</h3>
           </div>
-          <p className="text-sm text-red-700 dark:text-red-300 mb-3">{error}</p>
+          <p className="text-sm text-red-700 mb-3">{error}</p>
           <button
             onClick={fetchDashboardStats}
             className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors text-sm"
@@ -123,15 +123,15 @@ const DashboardStats = () => {
   ];
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
       {statsData.map((stat) => (
-        <div key={stat.label} className="p-5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-shadow">
+        <div key={stat.label} className="p-7 rounded-2xl bg-white border border-blue-100 shadow-[0_10px_28px_rgba(15,23,42,0.06)] hover:shadow-[0_14px_34px_rgba(59,130,246,0.12)] transition-shadow">
           <div className="flex justify-between items-start mb-4">
-            <div className={`p-2 rounded-lg ${stat.bg}`}>
+            <div className={`p-2.5 rounded-xl ${stat.bg}`}>
               <span className={`material-symbols-outlined ${stat.color}`}>{stat.icon}</span>
             </div>
             {stat.trend !== 0 && (
-              <div className={`flex items-center text-xs font-semibold px-2 py-1 rounded-full ${stat.trend > 0 ? 'text-emerald-600 bg-emerald-50 dark:bg-emerald-500/10' : 'text-red-600 bg-red-50 dark:bg-red-500/10'}`}>
+              <div className={`flex items-center text-xs font-semibold px-2 py-1 rounded-full ${stat.trend > 0 ? 'text-emerald-600 bg-emerald-50' : 'text-red-600 bg-red-50'}`}>
                 <span className="material-symbols-outlined !text-[12px] mr-1">
                   {stat.trend > 0 ? 'trending_up' : 'trending_down'}
                 </span>
@@ -140,10 +140,10 @@ const DashboardStats = () => {
             )}
           </div>
           <div className="flex flex-col">
-            <h3 className="text-2xl font-bold text-slate-900 dark:text-white">{stat.value}</h3>
-            <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">{stat.label}</p>
+            <h3 className="text-2xl font-bold text-slate-900">{stat.value}</h3>
+            <p className="text-sm text-slate-600 font-medium">{stat.label}</p>
             {stat.subtitle && (
-              <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">{stat.subtitle}</p>
+              <p className="text-xs text-slate-500 mt-1">{stat.subtitle}</p>
             )}
           </div>
         </div>

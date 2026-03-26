@@ -1,18 +1,26 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import HostSidebar from '../components/HostSidebar';
 import HostHeader from '../components/HostHeader';
 import HostPropertyCard from '../components/HostPropertyCard';
-// import { useAuth } from '@/contexts/AuthContext';
+import { AuthStateContext} from "@/app/providers/AuthProvider.jsx";
+import { useContext } from 'react';
 import hostService from "../services/host.service.js";
-
+import { Link } from 'react-router-dom';
 const HostPortalPage = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('All Listings');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [properties, setProperties] = useState([]);
   const [loadingProperties, setLoadingProperties] = useState(true);
-  const { user, loading } = useState(null);
+  const { user } = useContext(AuthStateContext);
+
+  const STATUS_LABELS = {
+    ACTIVE: 'Active',
+    INACTIVE: 'Inactive',
+    REJECTED: 'Rejected',
+    UNDER_REVIEW: 'Under Review',
+  };
 
   useEffect(() => {
     if (user && (user.isHost || user.roles?.includes('ROLE_HOST'))) {
@@ -26,7 +34,9 @@ const HostPortalPage = () => {
       title: dto.title,
       location: `${dto.city}, ${dto.country}`,
       imageUrl: dto.primaryImageUrl || dto.images?.[0]?.imageUrl || '',
-      status: dto.status === 'ACTIVE' ? 'Active' : dto.status === 'PENDING' ? 'Draft' : 'Archived',
+      status: STATUS_LABELS[dto.status] || dto.status,
+      rawStatus: dto.status,
+      reason: dto.reason || '',
       price: dto.pricePerNight,
       currency: 'VND',
       rating: dto.averageRating,
@@ -40,10 +50,11 @@ const HostPortalPage = () => {
     setLoadingProperties(true);
     try {
       const response = await hostService.getMyProperties(0, 100);
-      if (response.success) {
-        const mappedProperties = response.data.content.map(convertPropertyDtoToHostProperty);
-        setProperties(mappedProperties);
-      }
+      console.log('API response for getMyProperties:', response);
+      const pageData = response?.data?.content ? response.data : response;
+      const source = Array.isArray(pageData?.content) ? pageData.content : [];
+      const mappedProperties = source.map(convertPropertyDtoToHostProperty);
+      setProperties(mappedProperties);
     } catch (error) {
       console.error('Failed to load properties:', error);
     } finally {
@@ -51,21 +62,15 @@ const HostPortalPage = () => {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="flex h-screen items-center justify-center bg-background-light dark:bg-background-dark">
-        <span className="material-symbols-outlined animate-spin text-4xl text-primary">progress_activity</span>
-      </div>
-    );
-  }
+
 
   if (!user) {
     return (
-      <div className="flex h-screen items-center justify-center bg-background-light dark:bg-background-dark">
+      <div className="flex h-screen items-center justify-center bg-gradient-to-br from-blue-50 via-white to-sky-50">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">Authentication Required</h1>
-          <p className="text-slate-600 dark:text-slate-400 mb-4">Please log in to access the host portal.</p>
-          <Link to="/auth" className="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg font-semibold">
+          <h1 className="text-2xl font-semibold tracking-tight leading-tight text-slate-900 mb-4">Authentication Required</h1>
+          <p className="text-slate-600 leading-relaxed tracking-[0.01em] mb-4">Please log in to access the host portal.</p>
+          <Link to="/login" className="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg font-semibold">
             Log In
           </Link>
         </div>
@@ -75,10 +80,10 @@ const HostPortalPage = () => {
 
   if (!user.isHost && !user.roles?.includes('ROLE_HOST')) {
     return (
-      <div className="flex h-screen items-center justify-center bg-background-light dark:bg-background-dark">
+      <div className="flex h-screen items-center justify-center bg-gradient-to-br from-blue-50 via-white to-sky-50">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">Host Access Required</h1>
-          <p className="text-slate-600 dark:text-slate-400 mb-4">You need to become a host to access this page.</p>
+          <h1 className="text-2xl font-semibold tracking-tight leading-tight text-slate-900 mb-4">Host Access Required</h1>
+          <p className="text-slate-600 leading-relaxed tracking-[0.01em] mb-4">You need to become a host to access this page.</p>
           <Link to="/host" className="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg font-semibold">
             Become a Host
           </Link>
@@ -95,16 +100,16 @@ const HostPortalPage = () => {
 
   const filteredProperties = properties.filter((prop) => {
     if (activeTab === 'All Listings') return true;
-    return prop.status === activeTab;
+    return prop.rawStatus === activeTab;
   });
 
   const getCount = (type) => {
     if (type === 'All Listings') return properties.length;
-    return properties.filter((property) => property.status === type).length;
+    return properties.filter((property) => property.rawStatus === type).length;
   };
 
   return (
-    <div className="flex h-screen bg-background-light dark:bg-background-dark text-slate-900 dark:text-white overflow-hidden page-transition">
+    <div className="flex h-screen bg-gradient-to-br from-blue-50 via-white to-sky-50 text-slate-900 overflow-hidden page-transition">
       <HostSidebar
         user={hostUser}
         isOpen={mobileMenuOpen}
@@ -116,16 +121,16 @@ const HostPortalPage = () => {
 
         <div className="flex-1 overflow-y-auto p-6 scroll-smooth">
           <div className="max-w-[1200px] mx-auto w-full flex flex-col gap-6">
-            <nav className="flex text-sm font-medium text-slate-500 dark:text-slate-400">
+            <nav className="flex text-sm font-medium tracking-[0.01em] text-slate-600">
               <Link to="/" className="hover:text-primary transition-colors">Home</Link>
               <span className="mx-2">/</span>
-              <span className="text-slate-900 dark:text-white">My Properties</span>
+              <span className="text-slate-900">My Properties</span>
             </nav>
 
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div>
-                <h1 className="text-3xl font-bold text-slate-900 dark:text-white tracking-tight">My Properties</h1>
-                <p className="text-slate-500 dark:text-slate-400 mt-1">Manage your listings and view booking performance.</p>
+                <h1 className="text-3xl md:text-[2rem] font-semibold text-slate-900 tracking-tight leading-tight">My Properties</h1>
+                <p className="text-slate-600 mt-1 text-base leading-relaxed tracking-[0.01em]">Manage your listings and view booking performance.</p>
               </div>
               <button
                 onClick={() => navigate('/host/add-property')}
@@ -136,25 +141,25 @@ const HostPortalPage = () => {
               </button>
             </div>
 
-            <div className="border-b border-slate-200 dark:border-slate-800 mt-2">
+            <div className="border-b border-blue-100 mt-2">
               <div className="flex overflow-x-auto gap-8 pb-0">
-                {['All Listings', 'Active', 'Draft', 'Archived'].map((tab) => {
+                {['All Listings', 'ACTIVE', 'INACTIVE', 'UNDER_REVIEW', 'REJECTED'].map((tab) => {
                   const isActive = activeTab === tab;
                   return (
                     <button
                       key={tab}
                       onClick={() => setActiveTab(tab)}
-                      className={`relative pb-4 text-sm font-bold transition-colors border-b-2 whitespace-nowrap ${
+                      className={`relative pb-4 text-sm font-semibold tracking-[0.01em] transition-colors border-b-2 whitespace-nowrap ${
                         isActive
                           ? 'text-primary border-primary'
-                          : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 border-transparent hover:border-slate-300'
+                          : 'text-slate-600 hover:text-blue-700 border-transparent hover:border-blue-200'
                       }`}
                     >
-                      {tab}
+                      {tab === 'All Listings' ? tab : (STATUS_LABELS[tab] || tab)}
                       <span className={`ml-2 px-2 py-0.5 rounded-full text-xs ${
                         isActive
                           ? 'bg-primary/10 text-primary'
-                          : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
+                          : 'bg-blue-50 text-slate-600'
                       }`}
                       >
                         {getCount(tab)}
@@ -182,13 +187,13 @@ const HostPortalPage = () => {
 
                   <button
                     onClick={() => navigate('/host/add-property')}
-                    className="group flex flex-col items-center justify-center bg-slate-50 dark:bg-[#1a2632]/50 rounded-xl border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-primary dark:hover:border-primary hover:bg-slate-100 dark:hover:bg-[#1a2632] transition-all duration-300 min-h-[340px]"
+                    className="group flex flex-col items-center justify-center bg-blue-50/60 rounded-xl border-2 border-dashed border-blue-200 hover:border-primary hover:bg-blue-100/60 transition-all duration-300 min-h-[340px]"
                   >
                     <div className="bg-primary/10 text-primary p-4 rounded-full mb-4 group-hover:scale-110 transition-transform">
                       <span className="material-symbols-outlined text-[32px]">add_home</span>
                     </div>
-                    <h3 className="text-lg font-bold text-slate-900 dark:text-white">Add New Property</h3>
-                    <p className="text-sm text-slate-500 text-center px-8 mt-2">Create a new listing to start earning from your space.</p>
+                    <h3 className="text-lg font-semibold tracking-tight text-slate-900">Add New Property</h3>
+                    <p className="text-sm text-slate-500 text-center leading-relaxed tracking-[0.01em] px-8 mt-2">Create a new listing to start earning from your space.</p>
                   </button>
                 </>
               ) : (
@@ -196,8 +201,8 @@ const HostPortalPage = () => {
                   <div className="bg-primary/10 text-primary p-6 rounded-full mb-4">
                     <span className="material-symbols-outlined text-[48px]">home_work</span>
                   </div>
-                  <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">No properties found</h3>
-                  <p className="text-slate-500 dark:text-slate-400 mb-4">Get started by adding your first property</p>
+                  <h3 className="text-xl font-semibold tracking-tight text-slate-900 mb-2">No properties found</h3>
+                  <p className="text-slate-600 leading-relaxed tracking-[0.01em] mb-4">Get started by adding your first property</p>
                   <button
                     onClick={() => navigate('/host/add-property')}
                     className="inline-flex items-center gap-2 bg-primary hover:bg-blue-600 text-white font-medium px-5 py-2.5 rounded-lg transition-colors"
@@ -209,8 +214,8 @@ const HostPortalPage = () => {
               )}
             </div>
 
-            <footer className="mt-6 py-6 border-t border-slate-200 dark:border-slate-800">
-              <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-slate-500">
+            <footer className="mt-6 py-6 border-t border-blue-100">
+              <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-slate-600">
                 <p>© 2024 StayEase Host Portal. All rights reserved.</p>
                 <div className="flex gap-6">
                   <a href="#" className="hover:text-primary transition-colors">Privacy Policy</a>

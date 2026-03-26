@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import  hostService  from '../services/host.service';
 
 const HostPropertyCard = ({ property, onRefresh }) => {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
 
@@ -11,41 +13,27 @@ const HostPropertyCard = ({ property, onRefresh }) => {
   };
 
   const handleActivate = async () => {
-    if (!window.confirm('Activate this property and make it available for booking?')) return;
-
-    setLoading(true);
-    try {
-      await hostService.updatePropertyStatus(Number(property.id), 'ACTIVE');
-      alert('Property activated successfully!');
-      onRefresh?.();
-    } catch (error) {
-      alert(error.message || 'Failed to activate property');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleDeactivate = async () => {
-    if (!window.confirm('Deactivate this property? It will not be visible to guests.')) return;
+    if (!window.confirm('Chuyển tin đăng về trạng thái INACTIVE để chỉnh sửa/gửi duyệt lại?')) return;
 
     setLoading(true);
     try {
       await hostService.updatePropertyStatus(Number(property.id), 'INACTIVE');
-      alert('Property deactivated successfully!');
+      alert('Đã chuyển trạng thái thành INACTIVE');
       onRefresh?.();
     } catch (error) {
-      alert(error.message || 'Failed to deactivate property');
+      alert(error.message || 'Không thể cập nhật trạng thái tin đăng');
     } finally {
       setLoading(false);
     }
   };
+
 
   const handleDelete = async () => {
     if (!window.confirm('Are you sure you want to delete this property? This action cannot be undone.')) return;
 
     setLoading(true);
     try {
-      await hostService.deleteProperty(Number(property.id));
+      await hostService.deleteProperty(property.id);
       alert('Property deleted successfully!');
       onRefresh?.();
     } catch (error) {
@@ -55,33 +43,57 @@ const HostPropertyCard = ({ property, onRefresh }) => {
     }
   };
 
-  const isDraft = property.status === 'Draft';
-  const isActive = property.status === 'Active';
+  const rawStatus = property.rawStatus;
+  const displayStatus = property.status;
+  const isActive = rawStatus === 'ACTIVE' || displayStatus === 'Active';
+  const canMoveToInactive =
+    rawStatus === 'ACTIVE' ||
+    rawStatus === 'REJECTED' ||
+    displayStatus === 'Active' ||
+    displayStatus === 'Rejected';
+  const isRejected = property.rawStatus === 'REJECTED';
+  const canEdit = property.rawStatus !== 'ACTIVE';
+
+  const handleEdit = () => {
+    if (!canEdit) return;
+    navigate(`/host/properties/${property.id}/edit`);
+  };
 
   return (
-    <div className="group flex flex-col bg-white dark:bg-[#1a2632] rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden hover:shadow-lg transition-all duration-300">
+    <div className="group flex flex-col bg-white rounded-2xl border border-blue-100 overflow-hidden hover:shadow-[0_14px_34px_rgba(59,130,246,0.12)] transition-all duration-300">
       <div className="relative aspect-[4/3] w-full overflow-hidden">
         <div 
-          className={`absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105 ${isDraft ? 'opacity-80' : ''}`}
+          className={`absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105 ${isActive ? '' : 'opacity-85'}`}
           style={{ backgroundImage: `url("${property.imageUrl}")` }}
         />
         <div className="absolute top-3 right-3">
           <span className={`backdrop-blur-sm text-white text-xs font-bold px-2.5 py-1 rounded-full shadow-sm ${
-            property.status === 'Active' ? 'bg-green-500/90' : 'bg-slate-500/90'
+            property.rawStatus === 'ACTIVE'
+              ? 'bg-green-500/90'
+              : property.rawStatus === 'REJECTED'
+                ? 'bg-red-500/90'
+                : property.rawStatus === 'INACTIVE'
+                  ? 'bg-amber-500/90'
+                  : 'bg-slate-500/90'
           }`}>
             {property.status}
           </span>
         </div>
-        <button className="absolute top-3 left-3 bg-white/90 dark:bg-black/50 p-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white dark:hover:bg-black">
-          <span className="material-symbols-outlined text-[18px] text-slate-700 dark:text-slate-200">edit</span>
+        <button
+          onClick={handleEdit}
+          disabled={!canEdit}
+          title={canEdit ? 'Edit property' : 'Không thể chỉnh sửa khi trạng thái ACTIVE'}
+          className="absolute top-3 left-3 bg-white/90 p-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white disabled:opacity-60 disabled:cursor-not-allowed"
+        >
+          <span className="material-symbols-outlined text-[18px] text-slate-700">edit</span>
         </button>
       </div>
 
-      <div className="p-5 flex flex-col flex-1">
+      <div className="p-6 flex flex-col flex-1">
         <div className="flex justify-between items-start mb-2">
           <div>
-            <h3 className="text-lg font-bold text-slate-900 dark:text-white line-clamp-1">{property.title}</h3>
-            <p className="text-sm text-slate-500 dark:text-slate-400 flex items-center gap-1 mt-1">
+            <h3 className="text-lg font-bold text-slate-900 line-clamp-1">{property.title}</h3>
+            <p className="text-sm text-slate-500 flex items-center gap-1 mt-1">
               <span className="material-symbols-outlined text-[16px]">location_on</span>
               {property.location}
             </p>
@@ -92,7 +104,7 @@ const HostPropertyCard = ({ property, onRefresh }) => {
             <button
               onClick={() => setShowMenu(!showMenu)}
               disabled={loading}
-              className="text-slate-400 hover:text-primary -mr-2 p-1 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 disabled:opacity-50"
+              className="text-slate-400 hover:text-primary -mr-2 p-1 rounded-full hover:bg-blue-50 disabled:opacity-50"
             >
               <span className="material-symbols-outlined">more_vert</span>
             </button>
@@ -103,53 +115,40 @@ const HostPropertyCard = ({ property, onRefresh }) => {
                   className="fixed inset-0 z-10"
                   onClick={() => setShowMenu(false)}
                 />
-                <div className="absolute right-0 top-full mt-1 w-48 bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-slate-200 dark:border-slate-700 py-1 z-20">
-                  {isDraft && (
+                <div className="absolute right-0 top-full mt-1 w-48 bg-white rounded-xl shadow-lg border border-blue-100 py-1 z-20">
+                  {canMoveToInactive && (
                     <button
                       onClick={() => {
                         setShowMenu(false);
                         handleActivate();
                       }}
-                      className="w-full px-4 py-2 text-left text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 flex items-center gap-2"
+                      className="w-full px-4 py-2 text-left text-sm text-slate-700 hover:bg-blue-50 flex items-center gap-2"
                     >
                       <span className="material-symbols-outlined text-[18px] text-green-600">check_circle</span>
-                      Activate Property
-                    </button>
-                  )}
-
-                  {isActive && (
-                    <button
-                      onClick={() => {
-                        setShowMenu(false);
-                        handleDeactivate();
-                      }}
-                      className="w-full px-4 py-2 text-left text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 flex items-center gap-2"
-                    >
-                      <span className="material-symbols-outlined text-[18px] text-orange-600">pause_circle</span>
-                      Deactivate
+                      Chuyển về INACTIVE
                     </button>
                   )}
 
                   <button
                     onClick={() => {
                       setShowMenu(false);
-                      // TODO: Open edit modal
-                      alert('Edit feature coming soon!');
+                      handleEdit();
                     }}
-                    className="w-full px-4 py-2 text-left text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 flex items-center gap-2"
+                    disabled={!canEdit}
+                    className="w-full px-4 py-2 text-left text-sm text-slate-700 hover:bg-blue-50 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <span className="material-symbols-outlined text-[18px] text-blue-600">edit</span>
-                    Edit Property
+                    {canEdit ? 'Edit Property' : 'Edit bị khóa khi ACTIVE'}
                   </button>
 
-                  <div className="border-t border-slate-200 dark:border-slate-700 my-1" />
+                  <div className="border-t border-blue-100 my-1" />
 
                   <button
                     onClick={() => {
                       setShowMenu(false);
                       handleDelete();
                     }}
-                    className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 flex items-center gap-2"
+                    className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
                   >
                     <span className="material-symbols-outlined text-[18px]">delete</span>
                     Delete Property
@@ -160,7 +159,13 @@ const HostPropertyCard = ({ property, onRefresh }) => {
           </div>
         </div>
 
-        <div className="mt-auto pt-4 border-t border-slate-100 dark:border-slate-700/50">
+        <div className="mt-auto pt-5 border-t border-blue-100">
+          {isRejected && property.reason && (
+            <div className="mb-3 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-800">
+              <span className="font-semibold">Lý do từ chối:</span> {property.reason}
+            </div>
+          )}
+
           <div className="flex items-center justify-between mb-3">
             <p className={`font-bold ${property.isPriceSet ? 'text-primary' : 'text-slate-400'}`}>
               {formatPrice(property.price)} 
@@ -172,26 +177,26 @@ const HostPropertyCard = ({ property, onRefresh }) => {
             </div>
           </div>
 
-          {isDraft ? (
+          {canMoveToInactive ? (
             <button
               onClick={handleActivate}
               disabled={loading}
-              className="flex items-center justify-center text-xs text-white font-bold bg-primary hover:bg-blue-600 dark:bg-primary dark:hover:bg-blue-600 p-2 rounded-lg cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center justify-center text-xs text-white font-bold bg-primary hover:bg-blue-600 p-2 rounded-lg cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? (
                 <>
                   <span className="material-symbols-outlined text-[16px] animate-spin mr-1">progress_activity</span>
-                  Activating...
+                  Đang gửi...
                 </>
               ) : (
                 <>
                   <span className="material-symbols-outlined text-[16px] mr-1">check_circle</span>
-                  Activate Property
+                  Chuyển về INACTIVE
                 </>
               )}
             </button>
           ) : (
-            <div className="grid grid-cols-2 gap-2 text-xs text-slate-600 dark:text-slate-400 bg-slate-50 dark:bg-slate-800/50 p-2 rounded-lg">
+            <div className="grid grid-cols-2 gap-2 text-xs text-slate-600 bg-blue-50 p-2.5 rounded-xl">
               <div className="flex items-center gap-1.5">
                 <span className="material-symbols-outlined text-[16px] text-primary">event_upcoming</span>
                 <span>{property.upcomingBookings || 0} upcoming</span>

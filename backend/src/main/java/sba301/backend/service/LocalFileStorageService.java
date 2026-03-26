@@ -43,8 +43,21 @@ public class LocalFileStorageService {
 
         // Validate file type and size
         String contentType = file.getContentType();
+        boolean isDocumentFolder = "documents".equalsIgnoreCase(folder);
         if (contentType != null) {
-            if (contentType.startsWith("image/")) {
+            if (isDocumentFolder) {
+                boolean isAllowedDocument = "application/pdf".equalsIgnoreCase(contentType)
+                        || "image/jpeg".equalsIgnoreCase(contentType)
+                        || "image/png".equalsIgnoreCase(contentType);
+
+                if (!isAllowedDocument) {
+                    throw new IOException("Only PDF, JPG, JPEG, PNG files are supported for documents");
+                }
+
+                if (file.getSize() > 10 * 1024 * 1024) {
+                    throw new IOException("Document size must not exceed 10MB");
+                }
+            } else if (contentType.startsWith("image/")) {
                 // Max 10MB for images
                 if (file.getSize() > 10 * 1024 * 1024) {
                     throw new IOException("Image size must not exceed 10MB");
@@ -79,7 +92,9 @@ public class LocalFileStorageService {
 
         // Determine media type
         String mediaType = "IMAGE";
-        if (file.getContentType() != null) {
+        if (isDocumentFolder) {
+            mediaType = "DOCUMENT";
+        } else if (file.getContentType() != null) {
             if (file.getContentType().startsWith("video/")) {
                 mediaType = "VIDEO";
             }
