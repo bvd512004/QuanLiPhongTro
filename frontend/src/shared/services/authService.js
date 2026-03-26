@@ -7,11 +7,10 @@ export const login = async (email, password) => {
     password
   });
 
-  const data = res.data; // 🔥 vì axiosClient đã unwrap
+  // res = { success, data }
+  localStorage.setItem("token", res.data.accessToken);
 
-  localStorage.setItem("token", data.accessToken);  
-
-  return data;
+  return res.data;
 };
 
 // REGISTER

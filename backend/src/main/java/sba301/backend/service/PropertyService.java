@@ -24,6 +24,7 @@ import sba301.backend.mapper.PropertyMapper;
 import sba301.backend.repository.AmenityRepository;
 import sba301.backend.repository.CategoryRepository;
 import sba301.backend.repository.PropertyRepository;
+import sba301.backend.exception.ResourceNotFoundException;
 
 import java.util.HashSet;
 import java.util.List;
@@ -313,5 +314,12 @@ public class PropertyService {
     }
 
 
+    @Transactional
+    public PropertyResponse getPropertyById(Long id) {
+        Property property = propertyRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Property", "id", id));
+        propertyRepository.incrementViewCount(id);
+        return propertyMapper.toResponse(property);
+    }
 
 }

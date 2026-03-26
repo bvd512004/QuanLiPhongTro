@@ -7,7 +7,7 @@ const Layout = () => {
   const location = useLocation();
   
   
-  const fullWidthPages = ['/auth', '/host', '/profile'];
+  const fullWidthPages = ['/auth', '/host'];
   
   const isFullWidthPage = fullWidthPages.some(page => location.pathname.startsWith(page));
 

@@ -1,18 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-// import { useAuth } from '../contexts/AuthContext';
-
-// Tạm thời mock useAuth để không phụ thuộc AuthContext thật
-const useAuth = () => ({
-  user: null,
-  isAuthenticated: false,
-  logout: () => {},
-});
+import { AuthActionsContext, AuthStateContext } from '../providers/AuthProvider';
 
 const Header = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { user, isAuthenticated, logout } = useAuth();
+  const { user } = useContext(AuthStateContext);
+  const { logout } = useContext(AuthActionsContext);
+  const isAuthenticated = !!user;
   
   const [walletBalance, setWalletBalance] = useState(0);
   const [loadingWallet, setLoadingWallet] = useState(false);
@@ -177,15 +172,15 @@ const Header = () => {
               <div className="py-2">
                 {!isAuthenticated ? (
                   <>
-                    <Link to="/auth" className="block px-4 py-2 text-sm hover:bg-gray-100">Đăng nhập</Link>
-                    <Link to="/auth" className="block px-4 py-2 text-sm hover:bg-gray-100">Đăng ký</Link>
+                    <Link to="/login" className="block px-4 py-2 text-sm hover:bg-gray-100">Đăng nhập</Link>
+                    <Link to="/register" className="block px-4 py-2 text-sm hover:bg-gray-100">Đăng ký</Link>
                   </>
                 ) : (
                   <>
                     <Link to="/profile" className="flex items-center gap-3 px-4 py-2 text-sm hover:bg-gray-100">
                       <span className="material-symbols-outlined !text-[16px]">person</span> Tài khoản
                     </Link>
-                    
+
                     {user?.roles?.includes('ROLE_HOST') && (
                       <Link to="/wallet" className="flex items-center justify-between px-4 py-2 text-sm hover:bg-gray-100">
                         <div className="flex items-center gap-3">
@@ -198,7 +193,7 @@ const Header = () => {
                     )}
 
                     <div className="border-t border-gray-200 my-2"></div>
-                    
+
                     <button onClick={logout} className="flex items-center gap-3 w-full text-left px-4 py-2 text-sm hover:bg-gray-100 text-red-600">
                       <span className="material-symbols-outlined !text-[16px]">logout</span> Đăng xuất
                     </button>

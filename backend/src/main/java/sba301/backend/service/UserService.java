@@ -17,7 +17,6 @@ import sba301.backend.repository.UserRepository;
 import sba301.backend.mapper.UserMapper;
 
 @Service
-@RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Slf4j
 public class UserService {
@@ -25,6 +24,7 @@ public class UserService {
     UserRepository userRepository;
     RoleRepository roleRepository;
     UserMapper userMapper;
+
 
     public UserResponse getUserById(Long id) {
         User user = userRepository.findById(id)

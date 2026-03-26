@@ -102,4 +102,10 @@ public class PropertyController {
         propertyService.deleteProperty(id);
         return ResponseEntity.ok(ApiResponse.success("Property deleted", null));
     }
+    @GetMapping("/{id}")
+    public ResponseEntity<ApiResponse<PropertyResponse>> getPropertyById(@PathVariable Long id) {
+        PropertyResponse property = propertyService.getPropertyById(id);
+        return ResponseEntity.ok(ApiResponse.success(property));
+    }
+
 }

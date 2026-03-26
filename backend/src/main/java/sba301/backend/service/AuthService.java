@@ -21,9 +21,13 @@ import sba301.backend.entity.User;
 import sba301.backend.enums.RoleName;
 import sba301.backend.exception.BadRequestException;
 import sba301.backend.exception.ConflictException;
+import sba301.backend.mapper.UserMapper;
 import sba301.backend.repository.RoleRepository;
 import sba301.backend.repository.UserRepository;
-import sba301.backend.mapper.UserMapper;
+
+import java.util.HashSet;
+import java.util.Set;
+
 
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -70,12 +74,23 @@ public class AuthService {
         }
 
         Role role = roleRepository.findByName(RoleName.ROLE_USER)
-                .orElseThrow(() -> new BadRequestException("Role not found"));
+                .orElseGet(() -> {
+                    Role newRole = new Role();
+                    newRole.setName(RoleName.ROLE_USER);
+                    return roleRepository.save(newRole);
+                });
 
         User user = new User();
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setFirstName(request.getFirstName());
+        user.setLastName(request.getLastName());
+        user.setPhone(request.getPhone());
 
+        // ✅ FIX CHÍNH Ở ĐÂY
+        Set<Role> roles = new HashSet<>();
+        roles.add(role);
+        user.setRoles(roles);
 
         userRepository.save(user);
 
@@ -86,7 +101,6 @@ public class AuthService {
                 .user(userMapper.toResponse(user))
                 .build();
     }
-
     public UserResponse getCurrentUser() {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

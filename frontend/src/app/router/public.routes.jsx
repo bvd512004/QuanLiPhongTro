@@ -10,10 +10,6 @@ const publicRoutes = [
     element: <HomePage />
   },
   {
-    path: "/long-term-listings",
-    element: <HomePage />
-  },
-  {
     path: "/login",
     element: <LoginPage />
   },
