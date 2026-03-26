@@ -87,7 +87,6 @@ const AdminDashboardPage = () => {
 
             <StatCard title="Active properties" value={stats?.activeProperties} tone="emerald" />
             <StatCard title="Inactive properties" value={stats?.inactiveProperties} tone="amber" />
-            <StatCard title="Pending properties" value={stats?.pendingProperties} tone="blue" />
             <StatCard title="Rejected properties" value={stats?.rejectedProperties} tone="red" />
           </div>
         )}

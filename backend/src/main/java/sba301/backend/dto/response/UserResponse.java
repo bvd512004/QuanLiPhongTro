@@ -29,6 +29,7 @@ public class UserResponse {
     private String bio;
     private Boolean isVerified;
     private Boolean isHost;
+    private Boolean isActive;
     private Set<String> roles;
     private LocalDateTime createdAt;
 }
