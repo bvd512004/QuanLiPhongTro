@@ -8,14 +8,17 @@ const axiosClient = axios.create({
   },
 });
 
-// attach JWT token
+
 axiosClient.interceptors.request.use(
   (config) => {
+    const rawToken = localStorage.getItem("token");
+    const token = rawToken?.trim();
 
-    const token = localStorage.getItem("token");
-
-    if (token) {
+   
+    if (token && token !== "undefined" && token !== "null") {
       config.headers.Authorization = `Bearer ${token}`;
+    } else if (config.headers?.Authorization) {
+      delete config.headers.Authorization;
     }
 
     return config;
@@ -24,23 +27,10 @@ axiosClient.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// handle response
-axiosClient.interceptors.response.use(
-  (response) => response.data,
-  (error) => {
 
-    console.error("API Error:", error.response?.data || error.message);
-
-    if (error.response?.status === 401) {
-
-      localStorage.removeItem("token");
-
-
-
-    }
-
-    return Promise.reject(error);
-  }
-);
+  // axiosClient.interceptors.response.use(
+  //   (response) => response.data,
+    
+  // );
 
 export default axiosClient;

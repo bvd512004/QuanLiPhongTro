@@ -76,6 +76,10 @@ public class Booking extends BaseEntity {
     
     @Column(name = "transaction_id", length = 100)
     private String transactionId;
+
+    // Lưu hình biên lai chuyển khoản (để host xác nhận)
+    @Column(name = "transfer_proof_image_url", columnDefinition = "TEXT")
+    private String transferProofImageUrl;
     
     @Column(name = "special_requests", columnDefinition = "TEXT")
     private String specialRequests;

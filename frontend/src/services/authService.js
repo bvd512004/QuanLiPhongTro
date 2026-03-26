@@ -7,7 +7,11 @@ export const login = async (email, password) => {
     password
   });
 
-  const data = res.data; // 🔥 vì axiosClient đã unwrap
+  // axiosClient đã unwrap body -> { success, message, data }
+  const data = res?.data;
+  if (!data?.accessToken) {
+    throw new Error("Login response không có accessToken");
+  }
 
   localStorage.setItem("token", data.accessToken);  
 
@@ -17,17 +21,17 @@ export const login = async (email, password) => {
 // REGISTER
 export const register = async (data) => {
   const res = await axiosClient.post("/auth/register", data);
-  return res.data;
+  return res?.data;
 };
 
 // GET CURRENT USER
 export const getCurrentUser = async () => {
   const res = await axiosClient.get("/users/me");
-  return res.data;
+  return res?.data;
 };
 
 // UPDATE PROFILE
 export const updateProfile = async (data) => {
   const res = await axiosClient.put("/users/profile", data);
-  return res.data;
+  return res?.data;
 };
