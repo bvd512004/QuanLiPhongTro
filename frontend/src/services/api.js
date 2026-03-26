@@ -32,22 +32,14 @@ export const api = {
   // REGISTER
   register: async (data) => {
     try {
-
       const response = await axiosClient.post("/auth/register", data);
-
       return {
         success: true,
         data: response.data.data
       };
-
     } catch (error) {
-
-      console.error("Register error", error);
-
-      return {
-        success: false
-      };
-
+      // ném ra lỗi để catch ở component
+      throw error.response?.data || { message: "Register failed" };
     }
   },
   // GET /api/v1/properties?featured=true&limit=...
