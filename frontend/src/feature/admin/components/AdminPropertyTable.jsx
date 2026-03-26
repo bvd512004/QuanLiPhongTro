@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const formatDateTime = (value) => {
   if (!value) return '';
@@ -23,7 +24,7 @@ const formatPrice = (value) => {
   }
 };
 
-const AdminPropertyTable = ({ items, onApprove, onReject, loading }) => {
+const AdminPropertyTable = ({ items, loading, startIndex = 0 }) => {
   if (loading) {
     return (
       <div className="flex justify-center items-center py-10">
@@ -37,60 +38,52 @@ const AdminPropertyTable = ({ items, onApprove, onReject, loading }) => {
   }
 
   return (
-    <div className="overflow-x-auto bg-white rounded-lg shadow">
-      <table className="min-w-full divide-y divide-gray-200">
+    <div className="overflow-x-hidden bg-white rounded-lg shadow">
+      <table className="w-full table-fixed divide-y divide-gray-200">
         <thead className="bg-gray-50">
           <tr>
-            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-16">STT</th>
             <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
-            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Address</th>
+            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">Address</th>
             <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">City</th>
             <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price/night</th>
             <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Host email</th>
-            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Host name</th>
-            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created at</th>
-            <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider sticky right-0 bg-gray-50 z-10">
+            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">Host email</th>
+            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">Host name</th>
+            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden xl:table-cell">Created at</th>
+            <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider sticky right-0 bg-gray-50 z-10 w-44">
               Actions
             </th>
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-200">
-          {items.map((item) => (
+          {items.map((item, idx) => (
             <tr key={item.id}>
-              <td className="px-4 py-3 text-sm text-gray-900">{item.id}</td>
-              <td className="px-4 py-3 text-sm text-gray-900 max-w-xs truncate" title={item.title}>
+              <td className="px-4 py-3 text-sm text-gray-900 whitespace-nowrap overflow-hidden text-ellipsis">{startIndex + idx + 1}</td>
+              <td className="px-4 py-3 text-sm text-gray-900 truncate whitespace-nowrap" title={item.title}>
                 {item.title}
               </td>
-              <td className="px-4 py-3 text-sm text-gray-900 max-w-xs truncate" title={item.address}>
+              <td className="px-4 py-3 text-sm text-gray-900 truncate whitespace-nowrap hidden md:table-cell" title={item.address}>
                 {item.address}
               </td>
-              <td className="px-4 py-3 text-sm text-gray-900">{item.city}</td>
-              <td className="px-4 py-3 text-sm text-gray-900">{formatPrice(item.pricePerNight)}</td>
+              <td className="px-4 py-3 text-sm text-gray-900 whitespace-nowrap overflow-hidden text-ellipsis">{item.city}</td>
+              <td className="px-4 py-3 text-sm text-gray-900 whitespace-nowrap overflow-hidden text-ellipsis">{formatPrice(item.pricePerNight)}</td>
               <td className="px-4 py-3 text-xs">
                 <span className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 font-medium text-gray-800">
                   {item.status}
                 </span>
               </td>
-              <td className="px-4 py-3 text-sm text-gray-900">{item.hostEmail}</td>
-              <td className="px-4 py-3 text-sm text-gray-900">{item.hostFullName}</td>
-              <td className="px-4 py-3 text-sm text-gray-900">{formatDateTime(item.createdAt)}</td>
-              <td className="px-4 py-3 text-sm text-right sticky right-0 bg-white z-10">
+              <td className="px-4 py-3 text-sm text-gray-900 whitespace-nowrap overflow-hidden text-ellipsis hidden lg:table-cell">{item.hostEmail}</td>
+              <td className="px-4 py-3 text-sm text-gray-900 whitespace-nowrap overflow-hidden text-ellipsis hidden lg:table-cell">{item.hostFullName}</td>
+              <td className="px-4 py-3 text-sm text-gray-900 whitespace-nowrap overflow-hidden text-ellipsis hidden xl:table-cell">{formatDateTime(item.createdAt)}</td>
+              <td className="px-4 py-3 text-sm text-right sticky right-0 bg-white z-10 w-44">
                 <div className="flex justify-end gap-2">
-                  <button
-                    type="button"
-                    onClick={() => onApprove(item.id)}
-                    className="px-3 py-1 text-xs rounded-md bg-emerald-600 text-white hover:bg-emerald-700"
+                  <Link
+                    to={`/admin/properties/moderation/${item.id}`}
+                    className="px-3 py-1 text-xs rounded-md border border-indigo-200 bg-indigo-50 text-indigo-700 hover:bg-indigo-100"
                   >
-                    Approve
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => onReject(item.id)}
-                    className="px-3 py-1 text-xs rounded-md bg-red-600 text-white hover:bg-red-700"
-                  >
-                    Reject
-                  </button>
+                    Hồ sơ
+                  </Link>
                 </div>
               </td>
             </tr>

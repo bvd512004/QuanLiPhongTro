@@ -13,7 +13,7 @@ export const login = async (email, password) => {
     throw new Error("Login response không có accessToken");
   }
 
-  localStorage.setItem("token", data.accessToken);  
+  localStorage.setItem("token", res.data.accessToken);
 
   return data;
 };

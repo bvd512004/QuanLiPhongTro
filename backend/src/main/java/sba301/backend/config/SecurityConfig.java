@@ -2,6 +2,10 @@ package sba301.backend.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -59,7 +63,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/api/v1/bookings/code/*").permitAll()
                     .requestMatchers(HttpMethod.GET, "/api/v1/bookings/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/properties/**").permitAll()
-                // Route list dạng exact (không có dấu '/' ở cuối) - tránh mismatch với /** 
+                // Route list dạng exact (không có dấu '/' ở cuối) - tránh mismatch với /**
                 .requestMatchers(HttpMethod.GET, "/api/v1/categories").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/categories/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/amenities").permitAll()
@@ -90,6 +94,15 @@ public class SecurityConfig {
         return http.build();
     }
 
+    /**
+     * Bypass Spring Security filters for static uploaded files.
+     * This is more robust than relying only on authorizeHttpRequests matchers.
+     */
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return (web) -> web.ignoring().requestMatchers("/uploads/**");
+    }
+
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider(userDetailsService);
@@ -111,11 +124,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(
-                List.of(
-                        "http://localhost:5173",
-                        "http://localhost:5174",
-                        "http://localhost:3000",
-                        "https://holastay.vercel.app"));
+                List.of("http://localhost:5173", "http://localhost:3000", "https://holastay.vercel.app"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);

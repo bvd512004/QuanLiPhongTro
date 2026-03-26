@@ -1,9 +1,9 @@
 import React, { useCallback, useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { adminPropertyApi } from '@/feature/admin/api/adminPropertyApi';
 import AdminPropertyFilter from '@/feature/admin/components/AdminPropertyFilter';
 import AdminPropertyTable from '@/feature/admin/components/AdminPropertyTable';
 import Pagination from '@/feature/admin/components/Pagination';
-import RejectModal from '@/feature/admin/components/RejectModal';
 
 const AdminPropertyModerationPage = () => {
   const [filters, setFilters] = useState({
@@ -21,8 +21,7 @@ const AdminPropertyModerationPage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
-  const [rejectModalOpen, setRejectModalOpen] = useState(false);
-  const [selectedPropertyId, setSelectedPropertyId] = useState(null);
+  // Trang này chỉ để xem danh sách hồ sơ, action duyệt sẽ thực hiện ở trang khác (nếu cần).
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -85,50 +84,30 @@ const AdminPropertyModerationPage = () => {
     }));
   };
 
-  const handleApprove = async (id) => {
-    setError('');
-    setSuccessMessage('');
-    const result = await adminPropertyApi.approveProperty(id);
-    if (!result.success) {
-      setError(result.message || 'Không thể approve property.');
-      return;
-    }
-    setSuccessMessage('Approve property thành công.');
-    fetchData();
-  };
-
-  const handleOpenRejectModal = (id) => {
-    setSelectedPropertyId(id);
-    setRejectModalOpen(true);
-  };
-
-  const handleCloseRejectModal = () => {
-    setRejectModalOpen(false);
-    setSelectedPropertyId(null);
-  };
-
-  const handleConfirmReject = async (id, reason) => {
-    setError('');
-    setSuccessMessage('');
-    const result = await adminPropertyApi.rejectProperty(id, reason);
-    if (!result.success) {
-      setError(result.message || 'Không thể reject property.');
-      return;
-    }
-    setSuccessMessage('Reject property thành công.');
-    handleCloseRejectModal();
-    fetchData();
-  };
+  // Approve/Reject đã được loại bỏ khỏi trang list.
 
   return (
     <div className="min-h-screen bg-gray-100 px-4 py-6 md:px-8 md:py-10">
       <div className="max-w-7xl mx-auto">
-        <header className="mb-6">
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Admin - Property Moderation</h1>
-          <p className="mt-1 text-sm text-gray-600">
-            Quản lý và duyệt các property do host tạo. Bạn có thể lọc theo trạng thái, tìm kiếm, approve hoặc reject
-            từng property.
-          </p>
+        <header className="mb-6 flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+          <div>
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Admin - Property Moderation</h1>
+            <p className="mt-1 text-sm text-gray-600">Xem hồ sơ property và quản lý trạng thái trên hệ thống.</p>
+          </div>
+          <div className="flex items-center gap-2">
+            <Link
+              to="/admin/dashboard"
+              className="rounded-lg border border-indigo-200 bg-white px-4 py-2 text-sm font-semibold text-indigo-700 hover:bg-indigo-50/40"
+            >
+              Dashboard
+            </Link>
+            <Link
+              to="/admin/users"
+              className="rounded-lg border border-indigo-200 bg-white px-4 py-2 text-sm font-semibold text-indigo-700 hover:bg-indigo-50/40"
+            >
+              Users
+            </Link>
+          </div>
         </header>
 
         <AdminPropertyFilter initialStatus={filters.status} onChange={handleFilterChange} />
@@ -148,8 +127,7 @@ const AdminPropertyModerationPage = () => {
         <AdminPropertyTable
           items={items}
           loading={loading}
-          onApprove={handleApprove}
-          onReject={handleOpenRejectModal}
+          startIndex={(pageInfo.page || 0) * (pageInfo.size || 0)}
         />
 
         <Pagination
@@ -161,12 +139,6 @@ const AdminPropertyModerationPage = () => {
         />
       </div>
 
-      <RejectModal
-        open={rejectModalOpen}
-        onClose={handleCloseRejectModal}
-        onConfirm={handleConfirmReject}
-        propertyId={selectedPropertyId}
-      />
     </div>
   );
 };

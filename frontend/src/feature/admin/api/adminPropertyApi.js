@@ -14,6 +14,17 @@ export const adminPropertyApi = {
     }
   },
 
+  getPropertyDetail: async (id) => {
+    try {
+      const response = await axiosClient.get(`/admin/properties/${id}`);
+      return { success: true, data: response.data };
+    } catch (error) {
+      console.error('Error fetching admin property detail', error);
+      const message = error.response?.data?.message || 'Không thể tải hồ sơ property.';
+      return { success: false, message };
+    }
+  },
+
   approveProperty: async (id) => {
     try {
       const response = await axiosClient.patch(`/admin/properties/${id}/approve`);

@@ -8,11 +8,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import sba301.backend.constants.ApiPath;
 import sba301.backend.dto.request.property.AdminPropertyRejectRequest;
 import sba301.backend.dto.response.ApiResponse;
 import sba301.backend.dto.response.PageResponse;
+import sba301.backend.dto.response.property.AdminPropertyDetailResponse;
 import sba301.backend.dto.response.property.AdminPropertyModerationResponse;
 import sba301.backend.enums.PropertyStatus;
 import sba301.backend.service.AdminPropertyService;
@@ -21,6 +23,7 @@ import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping(ApiPath.ADMIN_PROPERTY)
+@PreAuthorize("hasRole('ADMIN')")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AdminPropertyController {
@@ -81,6 +84,12 @@ public class AdminPropertyController {
                 .build();
 
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ApiResponse<AdminPropertyDetailResponse>> getPropertyDetail(@PathVariable Long id) {
+        AdminPropertyDetailResponse dto = adminPropertyService.getPropertyDetail(id);
+        return ResponseEntity.ok(ApiResponse.success(dto));
     }
 
     private Sort parseSort(String sortParam) {

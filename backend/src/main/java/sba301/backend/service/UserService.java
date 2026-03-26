@@ -25,13 +25,7 @@ public class UserService {
     private final RoleRepository roleRepository;
     private final UserMapper userMapper;
 
-    public UserService(UserRepository userRepository,
-                       RoleRepository roleRepository,
-                       UserMapper userMapper) {
-        this.userRepository = userRepository;
-        this.roleRepository = roleRepository;
-        this.userMapper = userMapper;
-    }
+
 
     public UserResponse getUserById(Long id) {
         User user = userRepository.findById(id)

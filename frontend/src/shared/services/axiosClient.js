@@ -14,7 +14,7 @@ axiosClient.interceptors.request.use(
     const rawToken = localStorage.getItem("token");
     const token = rawToken?.trim();
 
-   
+
     if (token && token !== "undefined" && token !== "null") {
       config.headers.Authorization = `Bearer ${token}`;
     } else if (config.headers?.Authorization) {
@@ -27,10 +27,23 @@ axiosClient.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
+// handle response
+axiosClient.interceptors.response.use(
+  (response) => response.data,
+  (error) => {
 
-  // axiosClient.interceptors.response.use(
-  //   (response) => response.data,
-    
-  // );
+    console.error("API Error:", error.response?.data || error.message);
+
+    if (error.response?.status === 401) {
+
+      localStorage.removeItem("token");
+
+
+
+    }
+
+    return Promise.reject(error);
+  }
+);
 
 export default axiosClient;
