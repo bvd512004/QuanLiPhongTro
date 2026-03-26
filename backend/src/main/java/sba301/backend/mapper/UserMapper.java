@@ -27,6 +27,7 @@ public class UserMapper {
                 .bio(user.getBio())
                 .isVerified(user.getIsVerified())
                 .isHost(user.getIsHost())
+                .isActive(user.getIsActive())
                 .roles(user.getRoles().stream()
                         .map(role -> role.getName().name())
                         .collect(Collectors.toSet()))

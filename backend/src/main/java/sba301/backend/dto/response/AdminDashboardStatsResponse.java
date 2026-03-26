@@ -17,7 +17,6 @@ public class AdminDashboardStatsResponse {
     private long totalProperties;
     private long activeProperties;
     private long inactiveProperties;
-    private long pendingProperties;
     private long underReviewProperties;
     private long rejectedProperties;
 }

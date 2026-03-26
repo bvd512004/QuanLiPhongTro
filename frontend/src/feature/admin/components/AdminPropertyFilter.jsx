@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const STATUS_OPTIONS = ['INACTIVE', 'PENDING', 'UNDER_REVIEW', 'ACTIVE', 'REJECTED'];
+const STATUS_OPTIONS = ['INACTIVE', 'ACTIVE', 'REJECTED'];
 
 const AdminPropertyFilter = ({ initialStatus = 'INACTIVE', onChange }) => {
   const [status, setStatus] = useState(initialStatus);
