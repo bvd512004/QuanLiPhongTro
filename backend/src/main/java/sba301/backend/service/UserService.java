@@ -17,7 +17,6 @@ import sba301.backend.repository.UserRepository;
 import sba301.backend.mapper.UserMapper;
 
 @Service
-@RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Slf4j
 public class UserService {
@@ -37,7 +36,7 @@ public class UserService {
     @Transactional
     public UserResponse updateProfile(UpdateUserRequest request) {
 
-        // 🔥 lấy user từ token
+
         User user = getCurrentUser();
 
         if (request.getFirstName() != null) user.setFirstName(request.getFirstName());

@@ -13,20 +13,20 @@ function LoginPage() {
 
   const handleLogin = async () => {
     setLoading(true);
-  
+
     try {
       const res = await loginApi(email, password);
-  
+
       localStorage.setItem("token", res.accessToken);
-  
+
       login({
         token: res.accessToken,
         ...res.user
       });
-  
+
       alert("Login success");
       navigate("/");
-  
+
     } catch (err) {
       console.error(err);
       alert("Login failed");

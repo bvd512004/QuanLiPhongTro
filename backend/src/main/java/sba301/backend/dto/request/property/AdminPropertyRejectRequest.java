@@ -1,0 +1,14 @@
+package sba301.backend.dto.request.property;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class AdminPropertyRejectRequest {
+
+    private String reason;
+}
+

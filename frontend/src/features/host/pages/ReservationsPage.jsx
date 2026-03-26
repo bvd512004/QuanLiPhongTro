@@ -6,7 +6,7 @@ import ReservationStats from '../components/ReservationStats';
 import ReservationList from '../components/ReservationList';
 import ReservationCalendar from '../components/ReservationCalendar';
 import ReservationSidebar from '../components/ReservationSidebar';
-// import { useAuth } from '@/contexts/AuthContext';
+
 
 const ReservationsPage = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);

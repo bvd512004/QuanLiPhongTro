@@ -27,5 +27,19 @@ public interface UserRepository extends JpaRepository<User, Long> {
            "LOWER(u.lastName) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
            "LOWER(u.email) LIKE LOWER(CONCAT('%', :keyword, '%'))")
     Page<User> searchUsers(@Param("keyword") String keyword, Pageable pageable);
+
+    Long countByIsActiveTrue();
+
+    Long countByIsActiveFalse();
+
+    @Query("SELECT u FROM User u WHERE " +
+            "(:keyword IS NULL OR :keyword = '' OR " +
+            "LOWER(u.firstName) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
+            "LOWER(u.lastName) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
+            "LOWER(u.email) LIKE LOWER(CONCAT('%', :keyword, '%')))" +
+            "AND (:isActive IS NULL OR u.isActive = :isActive)")
+    Page<User> searchUsersAdmin(@Param("keyword") String keyword,
+                                  @Param("isActive") Boolean isActive,
+                                  Pageable pageable);
 }
 

@@ -13,7 +13,7 @@ const publicRoutes = [
         element: <Layout />,
         children: [
             { index: true, element: <HomePage /> },
-        
+
         ]
     },
     {
@@ -51,6 +51,35 @@ const publicRoutes = [
         element: <Layout />,
         children: [
             { index: true, element: <AdminPropertyModerationPage /> },
+        ],
+    }
+    ,
+    {
+        path: "/admin/dashboard",
+        element: <Layout />,
+        children: [
+            { index: true, element: <AdminDashboardPage /> },
+        ],
+    },
+    {
+        path: "/admin/users",
+        element: <Layout />,
+        children: [
+            { index: true, element: <AdminUserManagementPage /> },
+        ],
+    },
+    {
+        path: "/listing/:id",
+        element: <Layout />,
+        children: [
+            { index: true, element: <ListingPage /> },
+        ],
+    },
+    {
+        path: "/checkout",
+        element: <Layout />,
+        children: [
+            { index: true, element: <CheckoutPage /> },
         ],
     }
 ];

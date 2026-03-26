@@ -22,22 +22,9 @@ export const register = async (data) => {
 // GET CURRENT USER
 export const getCurrentUser = async () => {
   const res = await axiosClient.get("/users/me");
-
-  return res.data; 
+  return res.data;
 };
-// UPLOAD IMAGE
-export const uploadImage = async (file) => {
-  const formData = new FormData();
-  formData.append("file", file);
 
-  const res = await axiosClient.post("/files/upload-image", formData, {
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
-  });
-
-  return res.data; // 🔥 lấy {url}
-};
 // UPDATE PROFILE
 export const updateProfile = async (data) => {
   const res = await axiosClient.put("/users/profile", data);
