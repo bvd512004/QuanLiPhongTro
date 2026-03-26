@@ -22,7 +22,7 @@ import java.util.Map;
  * Handles images, videos, and 360 videos upload to Cloudinary or Local Storage
  */
 @RestController
-@RequestMapping("/api/v1/files")
+@RequestMapping("/api/files")
 @Slf4j
 @CrossOrigin(origins = "*")
 public class FileController {
