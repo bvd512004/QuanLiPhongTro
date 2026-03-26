@@ -2,10 +2,10 @@ import React from 'react';
 
 const HostHeader = ({ onMenuToggle }) => {
   return (
-    <header className="h-16 flex items-center justify-between px-6 bg-white dark:bg-[#1a2632] border-b border-slate-200 dark:border-slate-800 flex-shrink-0 z-10">
-      <div className="flex items-center gap-4">
+    <header className="h-20 flex items-center justify-between px-8 bg-white/95 backdrop-blur border-b border-blue-100 flex-shrink-0 z-10 shadow-[0_4px_20px_rgba(59,130,246,0.08)]">
+      <div className="flex items-center gap-5">
         {/* Mobile Menu Toggle */}
-        <button onClick={onMenuToggle} className="lg:hidden text-slate-500 hover:text-primary p-1 rounded-md">
+        <button onClick={onMenuToggle} className="lg:hidden text-slate-500 hover:text-primary p-2 rounded-xl hover:bg-blue-50 transition-colors">
           <span className="material-symbols-outlined">menu</span>
         </button>
         
@@ -21,7 +21,7 @@ const HostHeader = ({ onMenuToggle }) => {
             <span className="material-symbols-outlined text-[20px]">search</span>
           </div>
           <input 
-            className="bg-slate-100 dark:bg-slate-800 border-none text-slate-900 dark:text-slate-200 text-sm rounded-lg focus:ring-2 focus:ring-primary block w-64 pl-10 p-2.5 transition-all placeholder-slate-400" 
+            className="bg-blue-50 border border-blue-100 text-slate-900 text-sm rounded-xl focus:ring-2 focus:ring-primary focus:border-primary block w-72 pl-10 p-3 transition-all placeholder-slate-400" 
             placeholder="Search properties, bookings..." 
             type="text"
           />
@@ -29,15 +29,15 @@ const HostHeader = ({ onMenuToggle }) => {
       </div>
       
       <div className="flex items-center gap-3">
-        <button className="relative p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors">
+        <button className="relative p-2.5 text-slate-500 hover:bg-blue-50 rounded-xl transition-colors border border-transparent hover:border-blue-100">
           <span className="material-symbols-outlined">notifications</span>
-          <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white dark:border-[#1a2632]"></span>
+          <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
         </button>
-        <button className="p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors">
+        <button className="p-2.5 text-slate-500 hover:bg-blue-50 rounded-xl transition-colors border border-transparent hover:border-blue-100">
           <span className="material-symbols-outlined">chat_bubble</span>
         </button>
-        <div className="h-8 w-px bg-slate-200 dark:bg-slate-700 mx-1"></div>
-        <button className="flex items-center gap-2 text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-primary transition-colors">
+        <div className="h-8 w-px bg-blue-100 mx-1"></div>
+        <button className="flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-primary transition-colors px-3 py-2 rounded-xl hover:bg-blue-50">
           <span>Help</span>
           <span className="material-symbols-outlined text-[18px]">help</span>
         </button>

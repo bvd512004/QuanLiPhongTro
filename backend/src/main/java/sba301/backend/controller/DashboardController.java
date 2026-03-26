@@ -18,7 +18,7 @@ import sba301.backend.service.DashboardService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/dashboard")
+@RequestMapping("/api/v1/dashboard")
 @RequiredArgsConstructor
 @Slf4j
 public class DashboardController {

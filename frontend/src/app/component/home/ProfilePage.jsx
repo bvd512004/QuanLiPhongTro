@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getCurrentUser } from "@/services/authService";
+import { getCurrentUser } from "@/shared/services/authService.js";
 import { Link } from "react-router-dom";
 
 function ProfilePage() {

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../hooks/useAuth';
+import { AuthStateContext} from "@/app/providers/AuthProvider.jsx";
+import { useContext } from 'react';
 import { useEffect, useState } from 'react';
 
 export const PublicHeader = () => {

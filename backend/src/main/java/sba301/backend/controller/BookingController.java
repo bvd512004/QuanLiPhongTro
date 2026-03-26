@@ -21,7 +21,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Slf4j
 public class BookingController {
-    BookingService bookingService;
+    private final BookingService bookingService;
 
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<BookingResponse>> getBookingById(@PathVariable Long id) {

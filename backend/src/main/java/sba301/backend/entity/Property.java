@@ -95,7 +95,7 @@ public class Property extends BaseEntity {
     
     @Enumerated(EnumType.STRING)
     @Column(name = "status", length = 20)
-    private PropertyStatus status = PropertyStatus.PENDING;
+    private PropertyStatus status = PropertyStatus.INACTIVE;
     
     @Column(name = "is_instant_book")
     private Boolean isInstantBook = false;
@@ -125,7 +125,14 @@ public class Property extends BaseEntity {
     @OrderBy("displayOrder ASC")
     @Builder.Default
     private List<PropertyImage> images = new ArrayList<>();
-    
+
+    @OneToMany(mappedBy = "property", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<PropertyDocument> documents = new ArrayList<>();
+
+    @Column(name = "reason",nullable = true)
+    private String reason;
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
         name = "property_amenities",
@@ -151,6 +158,10 @@ public class Property extends BaseEntity {
     public void addImage(PropertyImage image) {
         images.add(image);
         image.setProperty(this);
+    }
+    public void addDocument(PropertyDocument document) {
+        documents.add(document);
+        document.setProperty(this);
     }
     
     public String getPrimaryImageUrl() {

@@ -44,6 +44,7 @@ public class PropertyResponse {
     private String houseRules;
     private String cancellationPolicy;
     private PropertyStatus status;
+    private String reason;
     private Boolean isInstantBook;
     private Boolean isFeatured;
     private BigDecimal averageRating;
@@ -52,9 +53,9 @@ public class PropertyResponse {
     private UserResponse host;
     private CategoryResponse category;
     private List<PropertyImageResponse> images;
+    private List<PropertyDocumentResponse> documents;
     private Set<AmenityResponse> amenities;
     private String primaryImageUrl;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }
-

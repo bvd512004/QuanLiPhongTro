@@ -3,6 +3,7 @@ package sba301.backend.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -18,17 +19,24 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import sba301.backend.controller.filters.JwtAuthenticationEntryPoint;
 import sba301.backend.controller.filters.JwtAuthenticationFilter;
 import sba301.backend.service.CustomUserDetailsService;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
-public class SecurityConfig {
+public class SecurityConfig implements WebMvcConfigurer {
+
+    @Value("${file.upload-dir:./uploads}")
+    private String uploadDir;
 
     private final CustomUserDetailsService userDetailsService;
     private final JwtAuthenticationEntryPoint authEntryPoint;
@@ -57,7 +65,9 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/api/v1/amenities/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/reviews/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/packages/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/v1/files/config").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/files/config").permitAll()
+                    .requestMatchers("/api/v1/files/**").permitAll()
+                    .requestMatchers("/api/v1/dashboard/**").permitAll()
                 .requestMatchers("/uploads/**").permitAll()
                 .requestMatchers("/swagger-ui/**", "/api-docs/**", "/swagger-ui.html").permitAll()
                 .requestMatchers("/h2-console/**").permitAll()
@@ -101,6 +111,13 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
+    }
+
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        Path uploadPath = Paths.get(uploadDir).toAbsolutePath().normalize();
+        registry.addResourceHandler("/uploads/**")
+                .addResourceLocations(uploadPath.toUri().toString());
     }
 
 }

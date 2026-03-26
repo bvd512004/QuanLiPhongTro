@@ -108,16 +108,16 @@ const ReservationCalendar = () => {
 
   if (loading) {
     return (
-      <div className="bg-white dark:bg-[#1A2633] rounded-xl border border-slate-200 dark:border-slate-700 p-6 shadow-sm">
+      <div className="bg-white rounded-2xl border border-blue-100 p-7 shadow-[0_10px_28px_rgba(15,23,42,0.06)]">
         <div className="flex items-center justify-between mb-6">
-          <div className="h-6 bg-gray-300 dark:bg-gray-600 rounded w-48 animate-pulse"></div>
-          <div className="h-6 bg-gray-300 dark:bg-gray-600 rounded w-32 animate-pulse"></div>
+          <div className="h-6 bg-gray-300 rounded w-48 animate-pulse"></div>
+          <div className="h-6 bg-gray-300 rounded w-32 animate-pulse"></div>
         </div>
         <div className="space-y-2">
           {[1, 2, 3, 4, 5, 6].map((row) => (
             <div key={row} className="flex gap-px">
               {[1, 2, 3, 4, 5, 6, 7].map((col) => (
-                <div key={col} className="h-20 bg-gray-200 dark:bg-gray-700 rounded animate-pulse flex-1"></div>
+                <div key={col} className="h-20 bg-gray-200 rounded animate-pulse flex-1"></div>
               ))}
             </div>
           ))}
@@ -128,8 +128,8 @@ const ReservationCalendar = () => {
 
   if (error) {
     return (
-      <div className="bg-white dark:bg-[#1A2633] rounded-xl border border-slate-200 dark:border-slate-700 p-6 shadow-sm">
-        <div className="text-center py-8 text-red-600 dark:text-red-400">
+      <div className="bg-white rounded-2xl border border-blue-100 p-7 shadow-[0_10px_28px_rgba(15,23,42,0.06)]">
+        <div className="text-center py-8 text-red-600">
           {error}
           <br />
           <button
@@ -146,24 +146,24 @@ const ReservationCalendar = () => {
   const days = generateCalendarDays();
 
   return (
-    <div className="bg-white dark:bg-[#1A2633] rounded-xl border border-slate-200 dark:border-slate-700 p-6 shadow-sm">
+    <div className="bg-white rounded-2xl border border-blue-100 p-7 shadow-[0_10px_28px_rgba(15,23,42,0.06)]">
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-4">
-          <h3 className="text-lg font-bold text-slate-900 dark:text-white">
+          <h3 className="text-lg font-bold text-slate-900">
             Lịch đặt phòng - {getMonthYearText()}
           </h3>
           <div className="flex gap-2">
             <button
               onClick={() => navigateMonth('prev')}
-              className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
+              className="p-1.5 hover:bg-blue-50 rounded-lg"
             >
-              <span className="material-symbols-outlined text-gray-600 dark:text-gray-400">chevron_left</span>
+              <span className="material-symbols-outlined text-gray-600">chevron_left</span>
             </button>
             <button
               onClick={() => navigateMonth('next')}
-              className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
+              className="p-1.5 hover:bg-blue-50 rounded-lg"
             >
-              <span className="material-symbols-outlined text-gray-600 dark:text-gray-400">chevron_right</span>
+              <span className="material-symbols-outlined text-gray-600">chevron_right</span>
             </button>
           </div>
         </div>
@@ -173,18 +173,18 @@ const ReservationCalendar = () => {
       </div>
       
       {/* Calendar Grid */}
-      <div className="grid grid-cols-7 gap-px bg-slate-200 dark:bg-gray-700 rounded-lg overflow-hidden border border-slate-200 dark:border-gray-700">
+      <div className="grid grid-cols-7 gap-px bg-blue-100 rounded-xl overflow-hidden border border-blue-100">
         {/* Header */}
         {['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'].map(d => (
-          <div key={d} className="bg-slate-50 dark:bg-gray-800 p-2 text-center text-xs font-bold text-slate-500 uppercase">
+          <div key={d} className="bg-blue-50 p-2.5 text-center text-xs font-bold text-slate-500 uppercase">
             {d}
           </div>
         ))}
 
         {/* Days */}
         {days.map((d, i) => (
-          <div key={i} className="bg-white dark:bg-[#1A2633] h-24 p-2 relative group hover:bg-slate-50 dark:hover:bg-gray-800 transition-colors">
-            <span className={`text-sm ${d.month === 'prev' || d.month === 'next' ? 'text-gray-400' : 'text-slate-900 font-medium dark:text-white'}`}>
+          <div key={i} className="bg-white h-24 p-2.5 relative group hover:bg-blue-50/70 transition-colors">
+            <span className={`text-sm ${d.month === 'prev' || d.month === 'next' ? 'text-gray-400' : 'text-slate-900 font-medium'}`}>
               {d.day}
             </span>
             
@@ -210,11 +210,11 @@ const ReservationCalendar = () => {
       <div className="mt-4 flex flex-wrap gap-4 text-xs">
         <div className="flex items-center gap-2">
           <div className="w-3 h-3 bg-green-100 border-2 border-green-500 rounded"></div>
-          <span className="text-gray-600 dark:text-gray-400">Check-in</span>
+          <span className="text-gray-600">Check-in</span>
         </div>
         <div className="flex items-center gap-2">
           <div className="w-3 h-3 bg-orange-100 border-2 border-orange-500 rounded"></div>
-          <span className="text-gray-600 dark:text-gray-400">Đang thuê</span>
+          <span className="text-gray-600">Đang thuê</span>
         </div>
       </div>
     </div>

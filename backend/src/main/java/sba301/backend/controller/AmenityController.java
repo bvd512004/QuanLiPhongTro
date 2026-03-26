@@ -22,8 +22,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 public class AmenityController {
-    private  AmenityRepository amenityRepository;
-    private  PropertyMapper propertyMapper;
+    private final AmenityRepository amenityRepository;
+    private final PropertyMapper propertyMapper;
 
     @GetMapping
     public ResponseEntity<ApiResponse<List<AmenityResponse>>> getAllAmenities() {

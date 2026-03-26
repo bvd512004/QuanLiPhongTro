@@ -1,4 +1,8 @@
 package sba301.backend.service;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,17 +22,9 @@ import sba301.backend.mapper.UserMapper;
 @Slf4j
 public class UserService {
 
-    private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
-    private final UserMapper userMapper;
-
-    public UserService(UserRepository userRepository,
-                       RoleRepository roleRepository,
-                       UserMapper userMapper) {
-        this.userRepository = userRepository;
-        this.roleRepository = roleRepository;
-        this.userMapper = userMapper;
-    }
+    UserRepository userRepository;
+    RoleRepository roleRepository;
+    UserMapper userMapper;
 
     public UserResponse getUserById(Long id) {
         User user = userRepository.findById(id)
@@ -39,7 +35,7 @@ public class UserService {
     @Transactional
     public UserResponse updateProfile(UpdateUserRequest request) {
 
-        // 🔥 lấy user từ token
+        // Get current authenticated user from security context.
         User user = getCurrentUser();
 
         if (request.getFirstName() != null) user.setFirstName(request.getFirstName());

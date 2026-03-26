@@ -32,11 +32,7 @@ axiosClient.interceptors.response.use(
     console.error("API Error:", error.response?.data || error.message);
 
     if (error.response?.status === 401) {
-
       localStorage.removeItem("token");
-
-
-
     }
 
     return Promise.reject(error);

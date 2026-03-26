@@ -22,9 +22,8 @@ import java.util.Map;
  * Handles images, videos, and 360 videos upload to Cloudinary or Local Storage
  */
 @RestController
-@RequestMapping("/api/files")
+@RequestMapping("/api/v1/files")
 @Slf4j
-@CrossOrigin(origins = "*")
 public class FileController {
 
     @Autowired
@@ -136,6 +135,35 @@ public class FileController {
     }
 
     /**
+     * Upload a single document (property proof)
+     * POST /api/files/upload-document
+     */
+    @PostMapping(value = "/upload-document", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ApiResponse<Map<String, Object>>> uploadDocument(
+            @RequestParam("file") MultipartFile file
+    ) {
+        try {
+            log.info("Uploading document: {} ({})", file.getOriginalFilename(), formatFileSize(file.getSize()));
+
+            Map<String, Object> result;
+            log.info("Using local storage for document upload");
+            result = localFileStorageService.saveFile(file, "documents");
+
+            return ResponseEntity.ok(ApiResponse.<Map<String, Object>>builder()
+                    .message("Document uploaded successfully")
+                    .data(result)
+                    .build());
+
+        } catch (IOException e) {
+            log.error("Failed to upload document: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(ApiResponse.<Map<String, Object>>builder()
+                            .message("Failed to upload document: " + e.getMessage())
+                            .build());
+        }
+    }
+
+    /**
      * Upload a 360 degree video
      * POST /api/files/upload-video-360
      */
@@ -201,8 +229,10 @@ public class FileController {
         config.put("storageType",  "Local Storage");
         config.put("maxImageSize", "10MB");
         config.put("maxVideoSize", "100MB");
+        config.put("maxDocumentSize", "10MB");
         config.put("supportedImageFormats", List.of("JPG", "PNG", "WebP", "GIF"));
         config.put("supportedVideoFormats", List.of("MP4", "MOV", "AVI", "WebM"));
+        config.put("supportedDocumentFormats", List.of("PDF", "JPG", "JPEG", "PNG"));
         config.put("maxImagesPerProperty", 10);
         config.put("maxVideosPerProperty", 3);
 

@@ -21,8 +21,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 public class CategoryController {
-    private CategoryRepository categoryRepository;
-    private PropertyMapper propertyMapper;
+    private final CategoryRepository categoryRepository;
+    private final PropertyMapper propertyMapper;
     @GetMapping
     public ResponseEntity<ApiResponse<List<CategoryResponse>>> getAllCategories() {
         List<CategoryResponse> categories = categoryRepository.findByIsActiveTrueOrderByDisplayOrderAsc()

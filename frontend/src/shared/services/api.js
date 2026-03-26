@@ -1,4 +1,4 @@
-import axiosClient from '../shared/services/axiosClient';
+import axiosClient from './axiosClient.js';
 
 
 export const api = {
@@ -53,7 +53,7 @@ export const api = {
   // GET /api/v1/properties?featured=true&limit=...
   getFeaturedProperties: async (limit = 6) => {
     try {
-      const response = await axiosClient.get('api/v1/properties/featured', { params: { limit } });
+      const response = await axiosClient.get('/properties/featured', { params: { limit } });
       // backend: { success, message, data: [...] }
       const payload = response.data;
       return {
@@ -69,7 +69,7 @@ export const api = {
   filterProperties: async (filters = {}, page = 0, size = 10) => {
     try {
       const params = { ...filters, page, size };
-      const response = await axiosClient.get('api/v1/properties', { params });
+      const response = await axiosClient.get('/properties', { params });
       // tuỳ backend, nếu cũng bọc kiểu { success, data: { content: [...] } } thì xử lý tương tự
       const payload = response.data;
       console.log('Filtered properties response:', payload);
