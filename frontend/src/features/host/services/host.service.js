@@ -2,7 +2,7 @@ import axiosClient from '../../../shared/services/axiosClient';
 const hostService = {
 
     getPropertyById: async (id) => {
-        const response = await axiosClient.get(`/properties/${id}`);
+        const response = await axiosClient.get(`/properties/host/${id}`);
         return response;
     },
     updateProperty: async (id, data) => {
