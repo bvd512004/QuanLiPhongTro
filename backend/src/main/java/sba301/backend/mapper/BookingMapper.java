@@ -38,6 +38,7 @@ public class BookingMapper {
                 .status(booking.getStatus())
                 .paymentStatus(booking.getPaymentStatus())
                 .paymentMethod(booking.getPaymentMethod())
+                .transferProofImageUrl(booking.getTransferProofImageUrl())
                 .specialRequests(booking.getSpecialRequests())
                 .guestMessage(booking.getGuestMessage())
                 .hostResponse(booking.getHostResponse())

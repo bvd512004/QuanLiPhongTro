@@ -2,6 +2,9 @@ package sba301.backend.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -43,42 +46,38 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(AbstractHttpConfigurer::disable)
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .exceptionHandling(ex -> ex.authenticationEntryPoint(authEntryPoint))
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/v1/auth/**").permitAll()
-                        .requestMatchers("/api/v1/public/**").permitAll()
-                        .requestMatchers("/api/v1/files/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/properties/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/categories/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/amenities/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/reviews/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/packages/**").permitAll()
-                        .requestMatchers("/uploads/**").permitAll()
-                        .requestMatchers("/swagger-ui/**", "/api-docs/**", "/swagger-ui.html").permitAll()
-                        .requestMatchers("/h2-console/**").permitAll()
-                        .anyRequest().authenticated()
-                )
-                .authenticationProvider(authenticationProvider())
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
-
             .csrf(AbstractHttpConfigurer::disable)
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .exceptionHandling(ex -> ex.authenticationEntryPoint(authEntryPoint))
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
+                // Preflight CORS (localhost:5173 → 8080 là cross-origin)
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .requestMatchers("/api/v1/auth/**").permitAll()
                 .requestMatchers("/api/v1/public/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/v1/bookings/check-availability").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/v1/bookings/booked-dates/*").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/v1/bookings/code/*").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/api/v1/bookings/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/properties/**").permitAll()
+                // Route list dạng exact (không có dấu '/' ở cuối) - tránh mismatch với /**
+                .requestMatchers(HttpMethod.GET, "/api/v1/categories").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/categories/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/v1/amenities").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/amenities/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/v1/reviews").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/reviews/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/v1/packages").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/packages/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/files/config").permitAll()
-                // Static uploaded files should be publicly accessible
-                .requestMatchers(HttpMethod.POST, "/api/v1/files/config").permitAll()
+                // File upload endpoint cần permitAll cho mọi method (tránh mismatch)
+                .requestMatchers("/api/files/config").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/files/upload-image").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/files/upload-images").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/files/upload-video").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/files/upload-video-360").permitAll()
+                .requestMatchers(HttpMethod.DELETE, "/api/files/{publicId}").permitAll()
+                .requestMatchers("/api/files/**").permitAll()
                 .requestMatchers("/uploads/**").permitAll()
                 .requestMatchers("/swagger-ui/**", "/api-docs/**", "/swagger-ui.html").permitAll()
                 .requestMatchers("/h2-console/**").permitAll()
@@ -118,30 +117,18 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    // ✅ CORS CHUẨN (FIX LỖI CỦA BẠN)
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-
-        configuration.setAllowedOriginPatterns(List.of(
-                "http://localhost:5173",
-                "http://localhost:3000",
-                "https://holastay.vercel.app"
-        ));
-
-        configuration.setAllowedMethods(Arrays.asList(
-                "GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"
-        ));
-
+        configuration.setAllowedOrigins(
+                List.of("http://localhost:5173", "http://localhost:3000", "https://holastay.vercel.app"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
-
         configuration.setAllowCredentials(true);
-
         configuration.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
-
         return source;
     }
 }

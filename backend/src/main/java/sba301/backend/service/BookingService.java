@@ -8,8 +8,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import sba301.backend.dto.response.*;
+import sba301.backend.dto.request.CreateBookingRequest;
+import sba301.backend.dto.request.SubmitTransferProofRequest;
 import sba301.backend.entity.Booking;
 import sba301.backend.entity.User;
 import sba301.backend.enums.BookingStatus;
@@ -24,6 +27,7 @@ import sba301.backend.repository.PropertyRepository;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -133,6 +137,90 @@ public class BookingService {
     public boolean isPropertyAvailable(Long propertyId, LocalDate checkIn, LocalDate checkOut) {
         List<Booking> conflicts = bookingRepository.findConflictingBookings(propertyId, checkIn, checkOut);
         return conflicts.isEmpty();
+    }
+
+    @Transactional
+    public BookingResponse createBooking(CreateBookingRequest request) {
+        if (!isPropertyAvailable(request.getPropertyId(), request.getCheckInDate(), request.getCheckOutDate())) {
+            throw new BadRequestException("Property is not available for the selected dates");
+        }
+
+        User currentUser = userService.getCurrentUser();
+
+        var propertyOpt = propertyRepository.findById(request.getPropertyId());
+        var property = propertyOpt.orElseThrow(() -> new ResourceNotFoundException("Property", "id", request.getPropertyId()));
+
+        // Compute nights + totals (backend entity has calculateFields hook for subtotal, but we set all totals explicitly)
+        int numNights = (int) java.time.temporal.ChronoUnit.DAYS.between(request.getCheckInDate(), request.getCheckOutDate());
+        if (numNights <= 0) {
+            numNights = 1; // defensive; request validation should prevent invalid ranges
+        }
+
+        java.math.BigDecimal pricePerNight = property.getPricePerNight() == null ? java.math.BigDecimal.ZERO : property.getPricePerNight();
+        java.math.BigDecimal cleaningFee = property.getCleaningFee() == null ? java.math.BigDecimal.ZERO : property.getCleaningFee();
+        java.math.BigDecimal serviceFee = property.getServiceFee() == null ? java.math.BigDecimal.ZERO : property.getServiceFee();
+
+        java.math.BigDecimal subtotal = pricePerNight.multiply(java.math.BigDecimal.valueOf(numNights));
+        java.math.BigDecimal totalPrice = subtotal.add(cleaningFee).add(serviceFee);
+
+
+        String bookingCode = null;
+        do {
+
+            bookingCode = "BK" + UUID.randomUUID().toString()
+                    .replace("-", "")
+                    .substring(0, 10);
+        } while (bookingRepository.findByBookingCode(bookingCode).isPresent());
+
+        Booking booking = Booking.builder()
+                .bookingCode(bookingCode)
+                .guest(currentUser)
+                .property(property)
+                .checkInDate(request.getCheckInDate())
+                .checkOutDate(request.getCheckOutDate())
+                .numGuests(request.getNumGuests())
+                .numAdults(request.getNumAdults())
+                .numChildren(request.getNumChildren())
+                .numInfants(request.getNumInfants())
+                .pricePerNight(pricePerNight)
+                .numNights(numNights)
+                .subtotal(subtotal)
+                .cleaningFee(cleaningFee)
+                .serviceFee(serviceFee)
+                .totalPrice(totalPrice)
+                .specialRequests(request.getSpecialRequests())
+                .guestMessage(request.getGuestMessage())
+                .paymentStatus(PaymentStatus.PENDING)
+                .paymentMethod("QR_CODE")
+                .status(BookingStatus.PENDING)
+                .build();
+
+        Booking saved = bookingRepository.save(booking);
+        return bookingMapper.toResponse(saved);
+    }
+
+    @Transactional
+    public BookingResponse submitTransferProof(Long bookingId, SubmitTransferProofRequest request) {
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new ResourceNotFoundException("Booking", "id", bookingId));
+
+        User currentUser = userService.getCurrentUser();
+        boolean isGuest = booking.getGuest() != null && booking.getGuest().getId().equals(currentUser.getId());
+        boolean isHost = booking.getProperty() != null && booking.getProperty().getHost() != null
+                && booking.getProperty().getHost().getId().equals(currentUser.getId());
+
+        // Allow guest to submit proof; keep host submission optional (for admin flows)
+        if (!isGuest && !isHost) {
+            throw new UnauthorizedException("You are not authorized to submit transfer proof");
+        }
+
+        booking.setTransferProofImageUrl(request.getTransferProofImageUrl());
+        booking.setTransactionId(request.getTransferReference());
+        booking.setPaymentMethod("QR_CODE");
+        booking.setPaymentStatus(PaymentStatus.PAID);
+
+        Booking saved = bookingRepository.save(booking);
+        return bookingMapper.toResponse(saved);
     }
 
     public List<LocalDate> getBookedDates(Long propertyId) {
