@@ -12,7 +12,7 @@ const axiosClient = axios.create({
 axiosClient.interceptors.request.use(
   (config) => {
 
-    const token = localStorage.getItem("token") || localStorage.getItem("accessToken");
+    const token = localStorage.getItem("token");
 
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
@@ -33,8 +33,7 @@ axiosClient.interceptors.response.use(
 
     if (error.response?.status === 401) {
 
-      localStorage.removeItem("token");
-      localStorage.removeItem("accessToken");
+      console.log("Unauthorized - maybe token expired");
 
 
 

@@ -1,16 +1,11 @@
 import React from "react";
 import Layout from "../layout/Layout";
 import HomePage from "../page/HomePage";
+import ProfilePage from "../page/ProfilePage";
 import LoginPage from "../page/LoginPage";
 import RegisterPage from "../page/RegisterPage";
-import ProfilePage from "../app/component/home/ProfilePage";
-import UpdateProfilePage from "../page/UpdateProfilePage";
-import ListingPage from "../page/ListingPage";
-import CheckoutPage from "../page/CheckoutPage";
 import AdminPropertyModerationPage from "../feature/admin/pages/AdminPropertyModerationPage";
-import AdminPropertyDetailPage from "../feature/admin/pages/AdminPropertyDetailPage";
-import AdminDashboardPage from "../feature/admin/pages/AdminDashboardPage";
-import AdminUserManagementPage from "../feature/admin/pages/AdminUserManagementPage";
+import UpdateProfilePage from "../page/UpdateProfilePage";
 const publicRoutes = [
     
     {
@@ -18,9 +13,17 @@ const publicRoutes = [
         element: <Layout />,
         children: [
             { index: true, element: <HomePage /> },
-        
+
         ]
     },
+    {
+        path: "/profile",
+        element: <Layout />,
+        children: [
+          { index: true, element: <ProfilePage /> },     // /profile
+          { path: "edit", element: <UpdateProfilePage /> } // /profile/edit
+        ]
+      },
     {
         path: "/login",
         element: <Layout />,
@@ -52,13 +55,6 @@ const publicRoutes = [
     }
     ,
     {
-        path: "/admin/properties/moderation/:id",
-        element: <Layout />,
-        children: [
-            { index: true, element: <AdminPropertyDetailPage /> },
-        ],
-    },
-    {
         path: "/admin/dashboard",
         element: <Layout />,
         children: [
@@ -70,20 +66,6 @@ const publicRoutes = [
         element: <Layout />,
         children: [
             { index: true, element: <AdminUserManagementPage /> },
-        ],
-    },
-    {
-        path: "/profile",
-        element: <Layout />,
-        children: [
-            { index: true, element: <ProfilePage /> },
-        ],
-    },
-    {
-        path: "/profile/edit",
-        element: <Layout />,
-        children: [
-            { index: true, element: <UpdateProfilePage /> },
         ],
     },
     {

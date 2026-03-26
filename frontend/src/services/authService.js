@@ -7,22 +7,10 @@ export const login = async (email, password) => {
     password
   });
 
-  // axiosClient đã unwrap thành ApiResponse, payload thực nằm ở res.data
-  const payload = res?.data ?? res;
-  const token = payload?.accessToken || payload?.token || null;
+  // res = { success, data }
+  localStorage.setItem("token", res.data.accessToken);
 
-  if (!token) {
-    throw new Error("Login response does not contain access token");
-  }
-
-  // Lưu cả 2 key để tương thích các luồng cũ
-  localStorage.setItem("token", token);
-  localStorage.setItem("accessToken", token);
-
-  return {
-    ...payload,
-    accessToken: token,
-  };
+  return res.data;
 };
 
 // REGISTER
@@ -33,7 +21,7 @@ export const register = async (data) => {
 
 // GET CURRENT USER
 export const getCurrentUser = async () => {
-  const res = await axiosClient.get("/auth/me");
+  const res = await axiosClient.get("/users/me");
   return res.data;
 };
 
