@@ -27,10 +27,10 @@ const HomePage = () => {
           console.log('No featured properties, fetching all properties...');
           const allPropertiesResponse = await api.filterProperties({}, 0, 16);
           if (allPropertiesResponse.success && allPropertiesResponse.data) {
+            // PageResponse backend dùng field `items` (không phải `content`)
             response = {
-              timestamp: Date.now().toString(),
               success: true,
-              data: allPropertiesResponse.data.content
+              data: allPropertiesResponse.data.items || allPropertiesResponse.data.content || [],
             };
           }
         }

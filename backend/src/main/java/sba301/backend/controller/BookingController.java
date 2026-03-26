@@ -1,7 +1,9 @@
 package sba301.backend.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -9,6 +11,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import sba301.backend.constants.ApiPath;
 import sba301.backend.dto.response.*;
+import sba301.backend.dto.request.CreateBookingRequest;
+import sba301.backend.dto.request.SubmitTransferProofRequest;
 import sba301.backend.service.BookingService;
 import sba301.backend.service.CustomUserDetailsService;
 
@@ -21,7 +25,15 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Slf4j
 public class BookingController {
-    private final BookingService bookingService;
+    @Autowired
+    BookingService bookingService;
+
+    @PostMapping
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<ApiResponse<BookingResponse>> createBooking(@Valid @RequestBody CreateBookingRequest request) {
+        BookingResponse booking = bookingService.createBooking(request);
+        return ResponseEntity.ok(ApiResponse.success(booking));
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<BookingResponse>> getBookingById(@PathVariable Long id) {
@@ -71,6 +83,16 @@ public class BookingController {
     public ResponseEntity<ApiResponse<BookingResponse>> confirmBooking(@PathVariable Long id) {
         BookingResponse booking = bookingService.confirmBooking(id);
         return ResponseEntity.ok(ApiResponse.success("Booking confirmed", booking));
+    }
+
+    @PostMapping("/{id}/transfer-proof")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<ApiResponse<BookingResponse>> submitTransferProof(
+            @PathVariable Long id,
+            @Valid @RequestBody SubmitTransferProofRequest request
+    ) {
+        BookingResponse booking = bookingService.submitTransferProof(id, request);
+        return ResponseEntity.ok(ApiResponse.success(booking));
     }
 
 

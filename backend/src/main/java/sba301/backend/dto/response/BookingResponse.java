@@ -36,6 +36,8 @@ public class BookingResponse {
     private BookingStatus status;
     private PaymentStatus paymentStatus;
     private String paymentMethod;
+
+    private String transferProofImageUrl;
     private String specialRequests;
     private String guestMessage;
     private String hostResponse;

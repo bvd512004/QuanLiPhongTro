@@ -16,6 +16,13 @@ const BookingWidget = ({
   const navigate = useNavigate();
   const guestPickerRef = useRef(null);
   const datePickerRef = useRef(null);
+
+  // Backend có thể trả về null (BigDecimal chưa set) => không được gọi toLocaleString trực tiếp.
+  const toNumber = (value) => {
+    if (value === null || value === undefined) return 0;
+    const n = typeof value === 'number' ? value : Number(value);
+    return Number.isFinite(n) ? n : 0;
+  };
   
   const [checkInDate, setCheckInDate] = useState('');
   const [checkOutDate, setCheckOutDate] = useState('');
@@ -35,8 +42,12 @@ const BookingWidget = ({
   const nights = checkInDate && checkOutDate
     ? Math.ceil((new Date(checkOutDate).getTime() - new Date(checkInDate).getTime()) / (1000 * 60 * 60 * 24))
     : 0;
-  const subtotal = pricePerNight * nights;
-  const total = subtotal + cleaningFee + serviceFee;
+  const safePricePerNight = toNumber(pricePerNight);
+  const safeCleaningFee = toNumber(cleaningFee);
+  const safeServiceFee = toNumber(serviceFee);
+
+  const subtotal = safePricePerNight * nights;
+  const total = subtotal + safeCleaningFee + safeServiceFee;
 
   // Khởi tạo giá trị từ params
   useEffect(() => {
@@ -144,12 +155,12 @@ const BookingWidget = ({
               city: property.city,
               country: property.country,
               primaryImageUrl: property.primaryImageUrl,
-              pricePerNight: property.pricePerNight,
+              pricePerNight: safePricePerNight,
             },
             numNights: nights,
             subtotal,
-            cleaningFee,
-            serviceFee,
+            cleaningFee: safeCleaningFee,
+            serviceFee: safeServiceFee,
             totalPrice: total,
           }
         });
@@ -283,7 +294,7 @@ const BookingWidget = ({
         <div className="border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl p-6 bg-white dark:bg-gray-800">
           <div className="flex justify-between items-baseline mb-5">
             <div className="flex items-baseline gap-1">
-              <span className="text-2xl font-bold text-gray-900 dark:text-white">{pricePerNight?.toLocaleString('vi-VN')}đ</span>
+              <span className="text-2xl font-bold text-gray-900 dark:text-white">{safePricePerNight.toLocaleString('vi-VN')}đ</span>
               <span className="text-gray-500 dark:text-gray-400 text-sm">/ đêm</span>
             </div>
             <div className="flex items-center gap-1.5 text-sm font-semibold text-gray-800 dark:text-gray-200">
@@ -441,16 +452,16 @@ const BookingWidget = ({
               <p className="text-center mb-4 text-gray-500">Bạn chưa bị tính phí</p>
               <div className="space-y-2">
                 <div className="flex justify-between">
-                  <span className="underline">{pricePerNight.toLocaleString('vi-VN')}đ x {nights} đêm</span>
+                  <span className="underline">{safePricePerNight.toLocaleString('vi-VN')}đ x {nights} đêm</span>
                   <span>{subtotal.toLocaleString('vi-VN')}đ</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="underline">Phí vệ sinh</span>
-                  <span>{cleaningFee.toLocaleString('vi-VN')}đ</span>
+                  <span>{safeCleaningFee.toLocaleString('vi-VN')}đ</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="underline">Phí dịch vụ</span>
-                  <span>{serviceFee.toLocaleString('vi-VN')}đ</span>
+                  <span>{safeServiceFee.toLocaleString('vi-VN')}đ</span>
                 </div>
               </div>
               <div className="border-t border-gray-200 dark:border-gray-600 my-4"></div>

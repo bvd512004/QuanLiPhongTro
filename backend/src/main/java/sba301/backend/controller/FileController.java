@@ -22,38 +22,35 @@ import java.util.Map;
  * Handles images, videos, and 360 videos upload to Cloudinary or Local Storage
  */
 @RestController
-@RequestMapping("/api/v1/files")
+@RequestMapping("/api/files")
 @Slf4j
 public class FileController {
 
     @Autowired
     private LocalFileStorageService localFileStorageService;
 
-    /**
-     * Upload a single image
-     * POST /api/files/upload-image
-     */
+
     @PostMapping(value = "/upload-image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiResponse<Map<String, Object>>> uploadImage(
             @RequestParam("file") MultipartFile file
     ) {
         try {
             log.info("Uploading image: {} ({})", file.getOriginalFilename(), formatFileSize(file.getSize()));
-
             Map<String, Object> result;
-                // Fallback to local storage
                 log.info("Using local storage for file upload");
                 result = localFileStorageService.saveFile(file, "images");
 
             return ResponseEntity.ok(ApiResponse.<Map<String, Object>>builder()
                     .message("Image uploaded successfully")
                     .data(result)
+                    .success(true)
                     .build());
 
         } catch (IOException e) {
             log.error("Failed to upload image: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(ApiResponse.<Map<String, Object>>builder()
+                            .success(false)
                             .message("Failed to upload image: " + e.getMessage())
                             .build());
         }
@@ -92,12 +89,14 @@ public class FileController {
         if (!errors.isEmpty()) {
             return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT)
                     .body(ApiResponse.<List<Map<String, Object>>>builder()
+                            .success(false)
                             .message("Some files failed to upload: " + String.join(", ", errors))
                             .data(results)
                             .build());
         }
 
         return ResponseEntity.ok(ApiResponse.<List<Map<String, Object>>>builder()
+                .success(true)
                 .message("All images uploaded successfully")
                 .data(results)
                 .build());
@@ -123,12 +122,14 @@ public class FileController {
             return ResponseEntity.ok(ApiResponse.<Map<String, Object>>builder()
                     .message("Video uploaded successfully")
                     .data(result)
+                    .success(true)
                     .build());
 
         } catch (IOException e) {
             log.error("Failed to upload video: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(ApiResponse.<Map<String, Object>>builder()
+                            .success(false)
                             .message("Failed to upload video: " + e.getMessage())
                             .build());
         }
@@ -184,12 +185,14 @@ public class FileController {
             return ResponseEntity.ok(ApiResponse.<Map<String, Object>>builder()
                     .message("360 video uploaded successfully")
                     .data(result)
+                    .success(true)
                     .build());
 
         } catch (IOException e) {
             log.error("Failed to upload 360 video: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(ApiResponse.<Map<String, Object>>builder()
+                            .success(false)
                             .message("Failed to upload 360 video: " + e.getMessage())
                             .build());
         }
@@ -209,11 +212,13 @@ public class FileController {
                 log.warn("Cannot delete from Cloudinary - service not available or disabled");
             return ResponseEntity.ok(ApiResponse.<Void>builder()
                     .message("Media deleted successfully")
+                    .success(true)
                     .build());
         } catch (Exception e) {
             log.error("Failed to delete media: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(ApiResponse.<Void>builder()
+                            .success(false)
                             .message("Failed to delete media: " + e.getMessage())
                             .build());
         }
@@ -239,6 +244,7 @@ public class FileController {
         return ResponseEntity.ok(ApiResponse.<Map<String, Object>>builder()
                 .message("Upload configuration")
                 .data(config)
+                .success(true)
                 .build());
     }
 
