@@ -14,17 +14,16 @@ const DashboardBookings = () => {
     try {
       setLoading(true);
       const response = await hostService.getHostBookings(0, 5);
-      if (response.success && response.data) {
-        setBookings(response.data.content);
-      }
+      setBookings(response.items || []);
     } catch (error) {
       console.error('Failed to load recent bookings:', error);
+      setBookings([]);
     } finally {
       setLoading(false);
     }
   };
 
-  const getStatusDisplay = (booking) => {
+  const getStatusDisplay = (booking = {}) => {
     const { status, paymentStatus, checkInDate, checkOutDate } = booking;
 
     if (status === 'PENDING') {
@@ -56,12 +55,16 @@ const DashboardBookings = () => {
   };
 
   const formatDate = (dateString) => {
+    if (!dateString) return '--';
     const date = new Date(dateString);
+    if (Number.isNaN(date.getTime())) return '--';
     return date.toLocaleDateString('vi-VN', {
       day: 'numeric',
       month: 'short'
     });
   };
+
+  const bookingsList = Array.isArray(bookings) ? bookings : [];
 
   if (loading) {
     return (
@@ -96,41 +99,46 @@ const DashboardBookings = () => {
       </div>
 
       <div className="flex flex-col gap-4 overflow-y-auto pr-1 flex-1">
-        {bookings.length === 0 ? (
+        {bookingsList.length === 0 ? (
           <div className="text-center py-8 text-gray-500">
             <span className="material-symbols-outlined text-4xl mb-2">event_busy</span>
             <p>Chưa có đặt phòng nào</p>
           </div>
         ) : (
-          bookings.map((booking) => {
+          bookingsList.map((booking) => {
             const status = getStatusDisplay(booking);
+            const guest = booking?.guest || {};
+            const property = booking?.property || {};
+            const guestName = `${guest.firstName || ''} ${guest.lastName || ''}`.trim() || 'Guest';
+            const avatarUrl = guest.avatarUrl || `https://api.dicebear.com/9.x/avataaars/svg?seed=${guest.firstName || 'guest'}`;
+
             return (
               <Link
                 to="/reservations"
-                key={booking.id}
+                key={booking?.id || `${guestName}-${booking?.checkInDate || 'booking'}`}
                 className="flex items-center gap-4 p-3 rounded-xl hover:bg-blue-50 transition-colors group cursor-pointer"
               >
                 <img
-                  src={booking.guest.avatarUrl || `https://api.dicebear.com/9.x/avataaars/svg?seed=${booking.guest.firstName}`}
-                  alt={`${booking.guest.firstName} ${booking.guest.lastName}`}
+                  src={avatarUrl}
+                  alt={guestName}
                   className="size-10 rounded-full bg-slate-100 object-cover"
                 />
                 <div className="flex-1 min-w-0">
                   <div className="flex justify-between items-start mb-0.5">
                     <h4 className="text-sm font-semibold leading-snug tracking-[0.01em] text-slate-900 truncate">
-                      {booking.guest.firstName} {booking.guest.lastName}
+                      {guestName}
                     </h4>
                     <span className={`text-[10px] font-semibold tracking-[0.02em] px-2 py-0.5 rounded-full ${status.color}`}>
                       {status.text}
                     </span>
                   </div>
                   <p className="text-xs text-slate-500 leading-relaxed tracking-[0.01em] truncate mb-1">
-                    {booking.property.title}
+                    {property.title || 'Property'}
                   </p>
                   <div className="flex items-center gap-1 text-xs text-slate-400">
                     <span className="material-symbols-outlined !text-[12px]">calendar_month</span>
                     <span>
-                      {formatDate(booking.checkInDate)} - {formatDate(booking.checkOutDate)}
+                      {formatDate(booking?.checkInDate)} - {formatDate(booking?.checkOutDate)}
                     </span>
                   </div>
                 </div>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { api } from '@/services/api';
+import { api } from '@/shared/services/api.js';
 
 const BookingWidget = ({
   pricePerNight,

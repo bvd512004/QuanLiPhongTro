@@ -49,6 +49,7 @@ public class PropertyController {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ApiResponse.success("Property created", property));
     }
+
     @GetMapping("/host/{hostId}")
     public ResponseEntity<ApiResponse<PageResponse<PropertyResponse>>> getHostProperties(
             @PathVariable Long hostId,
@@ -68,7 +69,7 @@ public class PropertyController {
         return ResponseEntity.ok(ApiResponse.success(properties));
     }
 
-    @GetMapping("/host/{id}")
+    @GetMapping("/my-properties/{id}")
     @PreAuthorize("hasRole('HOST')")
     public ResponseEntity<ApiResponse<PropertyResponse>> getMyPropertyById(
             @PathVariable Long id,

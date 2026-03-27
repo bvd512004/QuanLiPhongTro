@@ -42,12 +42,14 @@ const ReservationList = () => {
 
       // Keep this sufficiently high for responsive client-side filtering.
       const response = await hostService.getHostBookings(0, 200);
+      const normalizedBookings = response.items || [];
 
-      if (response.success && response.data) {
-        setBookings(response.data.content || []);
+      if (normalizedBookings.length > 0 || response?.success !== false) {
+        setBookings(normalizedBookings);
       } else {
-        const errorMsg = response.message || 'Không thể tải danh sách đặt chỗ. Vui lòng thử lại.';
+        const errorMsg = response?.message || 'Không thể tải danh sách đặt chỗ. Vui lòng thử lại.';
         setError(errorMsg);
+        setBookings([]);
       }
     } catch (err) {
       let errorMsg = 'Đã xảy ra lỗi khi tải danh sách đặt chỗ.';
@@ -59,6 +61,7 @@ const ReservationList = () => {
         errorMsg = 'Lỗi kết nối mạng. Vui lòng kiểm tra kết nối internet và thử lại.';
       }
       setError(errorMsg);
+      setBookings([]);
     } finally {
       setLoading(false);
     }

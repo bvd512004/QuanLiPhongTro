@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Hero from '../app/component/home/Hero.jsx';
 import ListingCard from '../app/component/home/ListingCard.jsx';
-import { api } from '../services/api';
-import { AuthStateContext, AuthActionsContext } from '../providers/AuthProvider';
+import { api } from '@/shared/services/api.js';
+import { AuthStateContext, AuthActionsContext } from '@/app/providers/AuthProvider.jsx';
 import { useContext } from 'react';
 import { Link } from 'react-router-dom';
 

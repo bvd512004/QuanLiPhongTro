@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 import sba301.backend.dto.response.ApiResponse;
 
 import java.util.HashMap;
@@ -52,7 +53,15 @@ public class GlobalExceptionHandler {
                 .body(new ApiResponse<>(false, "Validation failed", errors, java.time.LocalDateTime.now()));
     }
 
-    // 5. Catch-all exception
+    // 5. Route/static resource not found
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<ApiResponse<Void>> handleNoResourceFound(NoResourceFoundException ex) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(new ApiResponse<>(false, ex.getMessage(), null, java.time.LocalDateTime.now()));
+    }
+
+    // 6. Catch-all exception
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Void>> handleOtherExceptions(Exception ex) {
         return ResponseEntity

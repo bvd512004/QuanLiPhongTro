@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { AuthActionsContext, AuthStateContext } from '../providers/AuthProvider';
+import { AuthActionsContext, AuthStateContext } from '@/app/providers/AuthProvider.jsx';
 
 const Header = () => {
   const location = useLocation();
@@ -9,8 +9,6 @@ const Header = () => {
   const { logout } = useContext(AuthActionsContext);
   const isAuthenticated = !!user;
   
-  const [walletBalance, setWalletBalance] = useState(0);
-  const [loadingWallet, setLoadingWallet] = useState(false);
   const [isAdminMode, setIsAdminMode] = useState(false);
 
   // Kiểm tra nếu đường dẫn hiện tại là admin
@@ -18,32 +16,6 @@ const Header = () => {
     setIsAdminMode(location.pathname.startsWith('/admin'));
   }, [location.pathname]);
 
-  // Tải số dư ví khi người dùng đăng nhập và có vai trò HOST
-  useEffect(() => {
-    if (isAuthenticated && user?.roles?.includes('ROLE_HOST')) {
-      loadWalletBalance();
-    }
-  }, [isAuthenticated, user]);
-
-  const loadWalletBalance = async () => {
-    try {
-      setLoadingWallet(true);
-      const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:8080/api/wallet', {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-      if (response.ok) {
-        const walletData = await response.json();
-        setWalletBalance(walletData.balance || 0);
-      }
-    } catch (error) {
-      console.error('Failed to load wallet:', error);
-    } finally {
-      setLoadingWallet(false);
-    }
-  };
 
   const formatCurrency = (amount) => {
     if (amount >= 1000000) {
@@ -73,7 +45,7 @@ const Header = () => {
             </span>
           </div>
           <h2 className="text-xl font-bold tracking-tight text-[#0d141b]">
-            HolaRent
+            QlP
           </h2>
         </Link>
 
@@ -88,28 +60,28 @@ const Header = () => {
             Cho thuê phòng trọ
           </Link>
 
-          {/* Wallet Button - Chỉ dành cho Host */}
-          {isAuthenticated && user?.roles?.includes('ROLE_HOST') && (
-            <Link
-              to="/wallet"
-              className={`hidden md:flex items-center gap-2 px-3 py-2 rounded-full border transition-all ${
-                location.pathname === '/wallet' 
-                  ? 'bg-rose-50 border-rose-500 text-rose-600' 
-                  : 'border-gray-200 hover:border-rose-300 hover:bg-rose-50'
-              }`}
-              title="Ví của tôi"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-              </svg>
-              <span className="text-sm font-semibold">
-                {loadingWallet ? '...' : `${formatCurrency(walletBalance)} ₫`}
-              </span>
-              {walletBalance < 50000 && (
-                <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
-              )}
-            </Link>
-          )}
+          {/*/!* Wallet Button - Chỉ dành cho Host *!/*/}
+          {/*{isAuthenticated && user?.roles?.includes('ROLE_HOST') && (*/}
+          {/*  <Link*/}
+          {/*    to="/wallet"*/}
+          {/*    className={`hidden md:flex items-center gap-2 px-3 py-2 rounded-full border transition-all ${*/}
+          {/*      location.pathname === '/wallet' */}
+          {/*        ? 'bg-rose-50 border-rose-500 text-rose-600' */}
+          {/*        : 'border-gray-200 hover:border-rose-300 hover:bg-rose-50'*/}
+          {/*    }`}*/}
+          {/*    title="Ví của tôi"*/}
+          {/*  >*/}
+          {/*    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">*/}
+          {/*      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />*/}
+          {/*    </svg>*/}
+          {/*    <span className="text-sm font-semibold">*/}
+          {/*      {loadingWallet ? '...' : `${formatCurrency(walletBalance)} ₫`}*/}
+          {/*    </span>*/}
+          {/*    {walletBalance < 50000 && (*/}
+          {/*      <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>*/}
+          {/*    )}*/}
+          {/*  </Link>*/}
+          {/*)}*/}
 
           {/* Admin Mode Toggle - Chỉ dành cho Admin */}
           {isAuthenticated && user?.roles?.includes('ROLE_ADMIN') && (
@@ -180,17 +152,42 @@ const Header = () => {
                     <Link to="/profile" className="flex items-center gap-3 px-4 py-2 text-sm hover:bg-gray-100">
                       <span className="material-symbols-outlined !text-[16px]">person</span> Tài khoản
                     </Link>
+                      {user?.roles?.includes('ROLE_ADMIN') && (
+                          <>
+                              <div className="border-t border-gray-200 dark:border-gray-700 my-2"></div>
 
-                    {user?.roles?.includes('ROLE_HOST') && (
-                      <Link to="/wallet" className="flex items-center justify-between px-4 py-2 text-sm hover:bg-gray-100">
-                        <div className="flex items-center gap-3">
-                          <span className="material-symbols-outlined !text-[16px]">account_balance_wallet</span> Ví của tôi
-                        </div>
-                        <span className={`text-xs font-semibold ${walletBalance < 50000 ? 'text-red-600' : 'text-green-600'}`}>
-                          {formatCurrency(walletBalance)} ₫
-                        </span>
+                              <Link
+                                  to="/admin/dashboard"
+                                  className="flex items-center gap-3 px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700"
+                              >
+                                  <span className="material-symbols-outlined !text-[16px]">admin_panel_settings</span>
+                                  Dashboard
+                              </Link>
+                              <div className="border-t border-gray-200 dark:border-gray-700 my-2"></div>
+                          </>
+                      )}
+
+                      <Link to="/profile?tab=bookings" className="flex items-center gap-3 px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700">
+                          <span className="material-symbols-outlined !text-[16px]">calendar_month</span>
+                          Lịch sử đặt phòng
                       </Link>
-                    )}
+                      <div className="border-t border-gray-200 dark:border-gray-700 my-2"></div>
+                      {user?.roles?.includes('ROLE_HOST') && (
+                          <Link to="/host" className="flex items-center gap-3 px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700">
+                              <span className="material-symbols-outlined !text-[16px]">home_work</span>
+                              Quản lý phòng trọ
+                          </Link>
+                      )}
+                    {/*{user?.roles?.includes('ROLE_HOST') && (*/}
+                    {/*  <Link to="/wallet" className="flex items-center justify-between px-4 py-2 text-sm hover:bg-gray-100">*/}
+                    {/*    <div className="flex items-center gap-3">*/}
+                    {/*      <span className="material-symbols-outlined !text-[16px]">account_balance_wallet</span> Ví của tôi*/}
+                    {/*    </div>*/}
+                    {/*    <span className={`text-xs font-semibold ${walletBalance < 50000 ? 'text-red-600' : 'text-green-600'}`}>*/}
+                    {/*      {formatCurrency(walletBalance)} ₫*/}
+                    {/*    </span>*/}
+                    {/*  </Link>*/}
+                    {/*)}*/}
 
                     <div className="border-t border-gray-200 my-2"></div>
 

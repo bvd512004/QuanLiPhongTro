@@ -115,17 +115,17 @@ const HostPropertyCard = ({ property, onRefresh }) => {
                   className="fixed inset-0 z-10"
                   onClick={() => setShowMenu(false)}
                 />
-                <div className="absolute right-0 top-full mt-1 w-48 bg-white rounded-xl shadow-lg border border-blue-100 py-1 z-20">
+                <div className="absolute right-0 top-full mt-1 w-56 bg-white rounded-xl shadow-lg border border-blue-100 py-1 z-20">
                   {canMoveToInactive && (
                     <button
                       onClick={() => {
                         setShowMenu(false);
                         handleActivate();
                       }}
-                      className="w-full px-4 py-2 text-left text-sm text-slate-700 hover:bg-blue-50 flex items-center gap-2"
+                      className="w-full h-10 px-4 text-left text-sm text-slate-700 hover:bg-blue-50 flex items-center gap-2 whitespace-nowrap"
                     >
                       <span className="material-symbols-outlined text-[18px] text-green-600">check_circle</span>
-                      Chuyển về INACTIVE
+                      <span className="truncate">Chuyển về INACTIVE</span>
                     </button>
                   )}
 
@@ -135,10 +135,10 @@ const HostPropertyCard = ({ property, onRefresh }) => {
                       handleEdit();
                     }}
                     disabled={!canEdit}
-                    className="w-full px-4 py-2 text-left text-sm text-slate-700 hover:bg-blue-50 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full h-10 px-4 text-left text-sm text-slate-700 hover:bg-blue-50 flex items-center gap-2 whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <span className="material-symbols-outlined text-[18px] text-blue-600">edit</span>
-                    {canEdit ? 'Edit Property' : 'Edit bị khóa khi ACTIVE'}
+                    <span className="truncate">{canEdit ? 'Edit Property' : 'Edit bị khóa khi ACTIVE'}</span>
                   </button>
 
                   <div className="border-t border-blue-100 my-1" />
@@ -148,10 +148,10 @@ const HostPropertyCard = ({ property, onRefresh }) => {
                       setShowMenu(false);
                       handleDelete();
                     }}
-                    className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
+                    className="w-full h-10 px-4 text-left text-sm text-red-600 hover:bg-red-50 flex items-center gap-2 whitespace-nowrap"
                   >
                     <span className="material-symbols-outlined text-[18px]">delete</span>
-                    Delete Property
+                    <span className="truncate">Delete Property</span>
                   </button>
                 </div>
               </>

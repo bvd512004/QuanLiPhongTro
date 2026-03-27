@@ -82,14 +82,13 @@ const HostReviewsPage = () => {
         size,
         rating: selectedRating === 'all' ? undefined : Number(selectedRating),
       });
-      const payload = response?.data?.content || [];
-      const normalized = Array.isArray(payload) ? payload : [];
+      const normalized = Array.isArray(response?.items) ? response.items : [];
       setReviews(normalized);
       setPageInfo({
-        totalElements: response?.data?.totalElements || 0,
-        totalPages: response?.data?.totalPages || 0,
-        first: response?.data?.first ?? true,
-        last: response?.data?.last ?? true,
+        totalElements: response?.totalItems || 0,
+        totalPages: response?.totalPages || 0,
+        first: response?.first ?? true,
+        last: response?.last ?? true,
       });
     } catch (err) {
       const fallbackMessage = 'Khong the tai danh sach review. Vui long thu lai.';
@@ -118,11 +117,11 @@ const HostReviewsPage = () => {
       setTotalReviews(Number(dashboardData?.totalReviews || 0));
 
       setRatingCounts({
-        5: Number(ratingResponses[0]?.data?.totalElements || 0),
-        4: Number(ratingResponses[1]?.data?.totalElements || 0),
-        3: Number(ratingResponses[2]?.data?.totalElements || 0),
-        2: Number(ratingResponses[3]?.data?.totalElements || 0),
-        1: Number(ratingResponses[4]?.data?.totalElements || 0),
+        5: Number(ratingResponses[0]?.totalItems || 0),
+        4: Number(ratingResponses[1]?.totalItems || 0),
+        3: Number(ratingResponses[2]?.totalItems || 0),
+        2: Number(ratingResponses[3]?.totalItems || 0),
+        1: Number(ratingResponses[4]?.totalItems || 0),
       });
     } catch (statsError) {
       console.error('Failed to load review stats:', statsError);

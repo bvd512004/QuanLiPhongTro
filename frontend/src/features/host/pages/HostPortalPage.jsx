@@ -29,20 +29,24 @@ const HostPortalPage = () => {
   }, [user]);
 
   const convertPropertyDtoToHostProperty = (dto) => {
+    const city = dto?.city || '';
+    const country = dto?.country || '';
+    const location = [city, country].filter(Boolean).join(', ');
+
     return {
-      id: String(dto.id),
-      title: dto.title,
-      location: `${dto.city}, ${dto.country}`,
-      imageUrl: dto.primaryImageUrl || dto.images?.[0]?.imageUrl || '',
-      status: STATUS_LABELS[dto.status] || dto.status,
-      rawStatus: dto.status,
-      reason: dto.reason || '',
-      price: dto.pricePerNight,
+      id: String(dto?.id ?? ''),
+      title: dto?.title || 'Untitled property',
+      location,
+      imageUrl: dto?.primaryImageUrl || dto?.images?.[0]?.imageUrl || '',
+      status: STATUS_LABELS[dto?.status] || dto?.status || 'UNKNOWN',
+      rawStatus: dto?.status,
+      reason: dto?.reason || '',
+      price: dto?.pricePerNight || 0,
       currency: 'VND',
-      rating: dto.averageRating,
+      rating: dto?.averageRating || 0,
       upcomingBookings: 0,
-      views: dto.viewCount,
-      isPriceSet: dto.pricePerNight > 0,
+      views: dto?.viewCount || 0,
+      isPriceSet: Number(dto?.pricePerNight) > 0,
     };
   };
 
@@ -50,10 +54,7 @@ const HostPortalPage = () => {
     setLoadingProperties(true);
     try {
       const response = await hostService.getMyProperties(0, 100);
-      console.log('API response for getMyProperties:', response);
-      const pageData = response?.data?.content ? response.data : response;
-      const source = Array.isArray(pageData?.content) ? pageData.content : [];
-      const mappedProperties = source.map(convertPropertyDtoToHostProperty);
+      const mappedProperties = (response.items || []).map(convertPropertyDtoToHostProperty);
       setProperties(mappedProperties);
     } catch (error) {
       console.error('Failed to load properties:', error);

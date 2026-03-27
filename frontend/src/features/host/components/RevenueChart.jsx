@@ -16,12 +16,7 @@ const RevenueChart = () => {
       setLoading(true);
       setError(null);
       const response = await hostService.getMonthlyRevenue(selectedYear);
-
-      if (response.data && Array.isArray(response.data)) {
-        setMonthlyData(response.data);
-      } else {
-        setMonthlyData([]);
-      }
+      setMonthlyData(Array.isArray(response.items) ? response.items : []);
     } catch (error) {
       console.error('Error fetching monthly revenue:', error);
       setError(error instanceof Error ? error.message : 'Không thể tải dữ liệu doanh thu');

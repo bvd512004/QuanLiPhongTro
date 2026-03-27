@@ -16,9 +16,7 @@ const ReservationStats = () => {
       setLoading(true);
       setError('');
       const response = await hostService.getHostBookingStats();
-      if (response.success && response.data) {
-        setStats(response.data);
-      }
+      setStats(response.data || null);
     } catch (error) {
       console.error('Failed to load booking stats:', error);
       setError(error.message || 'Failed to load statistics');

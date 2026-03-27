@@ -126,8 +126,8 @@ const EditPropertyPage = () => {
           : [],
       }));
 
-      if (categoryRes?.success) setCategories(categoryRes.data || []);
-      if (amenityRes?.success) setAmenities(amenityRes.data || []);
+      if (categoryRes?.success) setCategories(categoryRes.items || []);
+      if (amenityRes?.success) setAmenities(amenityRes.items || []);
     } catch (error) {
       setErrorMessage(error.message || 'Không thể tải dữ liệu để chỉnh sửa');
     } finally {
@@ -259,7 +259,7 @@ const EditPropertyPage = () => {
                 : img
             )),
           }));
-        } catch (error) {
+        } catch {
           setFormData((prev) => ({
             ...prev,
             images: prev.images.map((img) => (
@@ -302,7 +302,7 @@ const EditPropertyPage = () => {
         fileName: file.name,
         fileUrl: '',
         fileExtension: extension,
-        documentType: 'LAND_CERTIFICATE',
+        documentType: 'OTHER',
         fileSize: file.size,
         file,
         uploading: true,
@@ -337,7 +337,7 @@ const EditPropertyPage = () => {
                 : item
             )),
           }));
-        } catch (error) {
+        } catch {
           setFormData((prev) => ({
             ...prev,
             documents: prev.documents.map((item) => (
@@ -643,7 +643,6 @@ const EditPropertyPage = () => {
                       onChange={(e) => handleDocumentTypeChange(idx, e.target.value)}
                       className="text-sm rounded border border-blue-200 px-2 py-1"
                     >
-                      <option value="LAND_CERTIFICATE">Sổ đỏ/Sổ hồng</option>
                       <option value="AUTHORIZATION_PAPER">Giấy ủy quyền</option>
                       <option value="CONTRACT">Hợp đồng</option>
                       <option value="OTHER">Khác</option>

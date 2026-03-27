@@ -1,29 +1,90 @@
 import axiosClient from '../../../shared/services/axiosClient';
+
+const asObject = (value) => (value && typeof value === 'object' ? value : {});
+
+const pickData = (response) => {
+    if (Array.isArray(response)) return response;
+    if (response && typeof response === 'object' && 'data' in response) return response.data;
+    return response;
+};
+
+const extractItems = (response) => {
+    if (Array.isArray(response)) return response;
+
+    const data = pickData(response);
+    if (Array.isArray(data)) return data;
+    if (Array.isArray(data?.items)) return data.items;
+    if (Array.isArray(data?.content)) return data.content;
+
+    if (Array.isArray(response?.items)) return response.items;
+    if (Array.isArray(response?.content)) return response.content;
+
+    return [];
+};
+
+const normalizeBaseResponse = (response) => {
+    const hasExplicitSuccess = typeof response?.success === 'boolean';
+    return {
+        success: hasExplicitSuccess ? response.success : true,
+        message: response?.message || '',
+        data: pickData(response),
+        raw: response,
+    };
+};
+
+const normalizeListResponse = (response) => {
+    const base = normalizeBaseResponse(response);
+    return {
+        ...base,
+        items: extractItems(response),
+    };
+};
+
+const normalizePagedResponse = (response) => {
+    const base = normalizeBaseResponse(response);
+    const meta = asObject(base.data);
+    const items = extractItems(response);
+
+    const page = Number(meta.page ?? 0);
+    const totalItems = Number(meta.totalItems ?? meta.totalElements ?? items.length);
+
+    return {
+        ...base,
+        items,
+        page,
+        size: Number(meta.size ?? items.length),
+        totalItems,
+        totalPages: Number(meta.totalPages ?? (totalItems > 0 ? 1 : 0)),
+        first: typeof meta.first === 'boolean' ? meta.first : page <= 0,
+        last: typeof meta.last === 'boolean' ? meta.last : true,
+    };
+};
+
 const hostService = {
 
     getPropertyById: async (id) => {
-        const response = await axiosClient.get(`/properties/host/${id}`);
-        return response;
+        const response = await axiosClient.get(`/properties/my-properties/${id}`);
+        return normalizeBaseResponse(response);
     },
     updateProperty: async (id, data) => {
         const response = await axiosClient.put(`/properties/${id}`, data);
-        return response;
+        return normalizeBaseResponse(response);
     },
     getMyProperties: async (page = 0, size = 12) => {
         const response = await axiosClient.get(`/properties/my-properties?page=${page}&size=${size}`);
-        return response;
+        return normalizePagedResponse(response);
     },
     updatePropertyStatus: async (id, status) => {
         const response = await axiosClient.put(`/properties/${id}/status`, { status });
-        return response;
+        return normalizeBaseResponse(response);
     },
     deleteProperty: async (id) => {
         const response = await axiosClient.delete(`/properties/${id}`);
-        return response;
+        return normalizeBaseResponse(response);
     },
     createProperty: async (data) => {
         const response = await axiosClient.post('/properties', data);
-        return response;
+        return normalizeBaseResponse(response);
     },
     getAllActivePackages: async () => {
         const token = localStorage.getItem('token');
@@ -35,7 +96,7 @@ const hostService = {
         if (!response.ok) {
             throw new Error('Failed to fetch packages');
         }
-        return response.json();
+        return normalizeListResponse(await response.json());
     },
     createSubscription: async (request) => {
         const token = localStorage.getItem('token');
@@ -46,23 +107,23 @@ const hostService = {
                 ...(token && { Authorization: `Bearer ${token}` }),
             },
             body: JSON.stringify(request),
-        })
+        });
 
         if (!response.ok) {
             const error = await response.json();
             throw new Error(error.message || 'Failed to create subscription');
         }
-        return response.json();
+        return normalizeBaseResponse(await response.json());
     },
     getCategories: async () => {
         const response = await axiosClient.get('/categories');
-        return response;
+        return normalizeListResponse(response);
     },
 
     // Amenities API
     getAmenities: async () => {
         const response = await axiosClient.get('/amenities');
-        return response;
+        return normalizeListResponse(response);
     },
     // File Upload APIs
     async uploadFileWithProgress(url, formData, onProgress) {
@@ -77,7 +138,7 @@ const hostService = {
             },
         });
 
-        return response;
+        return normalizeBaseResponse(response);
     },
     async uploadImage(file, onProgress) {
         const formData = new FormData();
@@ -111,31 +172,31 @@ const hostService = {
             const error = await response.json();
             throw new Error(error.message || 'Failed to confirm payment');
         }
-        return response.json();
+        return normalizeBaseResponse(await response.json());
     },
     getHostBookings: async (page = 0, size = 10) => {
         const response = await axiosClient.get(`/bookings/host-bookings?page=${page}&size=${size}`);
-        return response;
+        return normalizePagedResponse(response);
     },
     getMonthlyRevenue: async (year) => {
         const queryString = year ? `?year=${year}` : '';
         const response = await axiosClient.get(`/dashboard/monthly-revenue${queryString}`);
-        return response;
+        return normalizeListResponse(response);
     },
     getDashboardStats: async () => {
         const response = await axiosClient.get('/dashboard/stats');
-        return response;
+        return normalizeBaseResponse(response);
     },
     confirmBooking: async (bookingId) => {
         const response = await axiosClient.put(`/bookings/${bookingId}/confirm`);
-        return response;
+        return normalizeBaseResponse(response);
     },
     cancelBooking: async (bookingId, reason) => {
         const url = reason
             ? `/bookings/${bookingId}/cancel?reason=${encodeURIComponent(reason)}`
             : `/bookings/${bookingId}/cancel`;
         const response = await axiosClient.put(url);
-        return response;
+        return normalizeBaseResponse(response);
     },
     getHostBookingCalendar: async (year, month) => {
         const params = new URLSearchParams();
@@ -143,11 +204,11 @@ const hostService = {
         if (month) params.append('month', String(month));
         const queryString = params.toString() ? `?${params.toString()}` : '';
         const response = await axiosClient.get(`/bookings/host-calendar${queryString}`);
-        return response;
+        return normalizeBaseResponse(response);
     },
     getHostBookingStats: async () => {
         const response = await axiosClient.get('/bookings/host-stats');
-        return response;
+        return normalizeBaseResponse(response);
     },
     getHostReviews: async ({ page = 0, size = 10, propertyId, rating } = {}) => {
         const params = new URLSearchParams();
@@ -157,14 +218,15 @@ const hostService = {
         if (rating) params.append('rating', String(rating));
 
         const response = await axiosClient.get(`/reviews/my-reviews?${params.toString()}`);
-        return response;
+        return normalizePagedResponse(response);
     },
     replyToReview: async (reviewId, hostResponse) => {
         const response = await axiosClient.put(`/reviews/${reviewId}/host-response`, { hostResponse });
-        return response;
-    }
+        return normalizeBaseResponse(response);
+    },
 
 
 };
 
 export default hostService;
+

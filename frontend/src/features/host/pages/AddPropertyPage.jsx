@@ -72,8 +72,8 @@ const AddPropertyPage = () => {
                 hostService.getCategories(),
                 hostService.getAmenities(),
             ]);
-            if (categoriesRes.success) setCategories(categoriesRes.data);
-            if (amenitiesRes.success) setAmenities(amenitiesRes.data);
+            if (categoriesRes.success) setCategories(categoriesRes.items || []);
+            if (amenitiesRes.success) setAmenities(amenitiesRes.items || []);
         } catch (error) {
             console.error('Failed to load categories/amenities:', error);
         }
@@ -375,7 +375,7 @@ const AddPropertyPage = () => {
                 ...prev,
                 documents: [...prev.documents, ...newDocuments]
             }));
-            uploadDocumentsInBackground(newDocuments);
+            await uploadDocumentsInBackground(newDocuments);
         }
 
         if (documentInputRef.current) {
@@ -1257,7 +1257,6 @@ const AddPropertyPage = () => {
                                             onChange={(e) => handleDocumentTypeChange(idx, e.target.value)}
                                             className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                         >
-                                            <option value="LAND_CERTIFICATE">Sổ đỏ / Sổ hồng</option>
                                             <option value="AUTHORIZATION_PAPER">Giấy ủy quyền</option>
                                             <option value="CONTRACT">Hợp đồng</option>
                                             <option value="OTHER">Khác</option>

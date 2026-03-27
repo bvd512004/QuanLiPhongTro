@@ -16,7 +16,7 @@ const DashboardStats = () => {
       setError(null);
       const response = await hostService.getDashboardStats();
       console.log('Dashboard stats response:', response);
-      setStats(response.data);
+      setStats(response.data || null);
     } catch (error) {
       console.error('Error fetching dashboard stats:', error);
       setError(error instanceof Error ? error.message : 'Không thể tải dữ liệu thống kê');
@@ -153,6 +153,3 @@ const DashboardStats = () => {
 };
 
 export default DashboardStats;
-
-
-

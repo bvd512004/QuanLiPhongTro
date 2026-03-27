@@ -161,13 +161,13 @@ export const api = {
     }
   },
 
-  // POST /api/files/upload-image (không nằm dưới /api/v1)
+  // POST /api/v1/files/upload-image
   uploadImage: async (file) => {
     try {
       const formData = new FormData();
       formData.append('file', file);
 
-      const response = await axiosClient.post('http://localhost:8080/api/files/upload-image', formData, {
+      const response = await axiosClient.post('http://localhost:8080/api/v1/files/upload-image', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       const apiRes = response;

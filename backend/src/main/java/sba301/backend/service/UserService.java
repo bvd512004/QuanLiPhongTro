@@ -18,6 +18,7 @@ import sba301.backend.mapper.UserMapper;
 
 @Service
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@RequiredArgsConstructor
 @Slf4j
 public class UserService {
 

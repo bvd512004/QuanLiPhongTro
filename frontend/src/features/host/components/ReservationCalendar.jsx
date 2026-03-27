@@ -16,9 +16,7 @@ const ReservationCalendar = () => {
       setLoading(true);
       setError('');
       const response = await hostService.getHostBookingCalendar(year, month);
-      if (response.success && response.data) {
-        setCalendarData(response.data);
-      }
+      setCalendarData(response.data || null);
     } catch (error) {
       console.error('Failed to load calendar data:', error);
       setError(error.message || 'Failed to load calendar');

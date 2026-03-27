@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
-import { api } from '../services/api';
+import { api } from '@/shared/services/api.js';
 
 // ─── Payment Config (frontend fallback) ─────────────────────────────────────
 // Backend hiện chưa có endpoint trả cấu hình ngân hàng,

@@ -22,7 +22,7 @@ import java.util.Map;
  * Handles images, videos, and 360 videos upload to Cloudinary or Local Storage
  */
 @RestController
-@RequestMapping("/api/files")
+@RequestMapping("/api/v1/files")
 @Slf4j
 public class FileController {
 
@@ -153,6 +153,7 @@ public class FileController {
             return ResponseEntity.ok(ApiResponse.<Map<String, Object>>builder()
                     .message("Document uploaded successfully")
                     .data(result)
+                    .success(true)
                     .build());
 
         } catch (IOException e) {
@@ -160,6 +161,7 @@ public class FileController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(ApiResponse.<Map<String, Object>>builder()
                             .message("Failed to upload document: " + e.getMessage())
+                            .success(false)
                             .build());
         }
     }
@@ -257,4 +259,3 @@ public class FileController {
         return String.format("%.2f MB", size / (1024.0 * 1024.0));
     }
 }
-
