@@ -161,6 +161,40 @@ export const api = {
     }
   },
 
+  // GET /api/v1/bookings/upcoming
+  getUpcomingBookings: async () => {
+    try {
+      const response = await axiosClient.get('/bookings/upcoming');
+      const payload = response;
+
+      if (payload && typeof payload === 'object' && 'success' in payload && 'data' in payload) {
+        return { success: !!payload.success, data: Array.isArray(payload.data) ? payload.data : [] };
+      }
+
+      return { success: true, data: Array.isArray(payload) ? payload : [] };
+    } catch (error) {
+      console.error('Error fetching upcoming bookings', error);
+      return { success: false, data: [] };
+    }
+  },
+
+  // GET /api/v1/bookings/{id}
+  getBookingById: async (bookingId) => {
+    try {
+      const response = await axiosClient.get(`/bookings/${bookingId}`);
+      const payload = response;
+
+      if (payload && typeof payload === 'object' && 'success' in payload && 'data' in payload) {
+        return { success: !!payload.success, data: payload.data };
+      }
+
+      return { success: true, data: payload };
+    } catch (error) {
+      console.error('Error fetching booking detail', error);
+      return { success: false, data: null };
+    }
+  },
+
   // POST /api/files/upload-image (không nằm dưới /api/v1)
   uploadImage: async (file) => {
     try {

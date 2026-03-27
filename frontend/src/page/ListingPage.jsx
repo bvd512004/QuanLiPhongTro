@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
-import { api } from "../services/api";
+import { api } from "../shared/services/api";
 
 import ListingTitle from "../app/component/listing/ListingTitle";
 import HeroGallery from "../app/component/listing/HeroGallary";

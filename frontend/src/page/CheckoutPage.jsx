@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useLocation } from 'react-router-dom';
-import { api } from '../services/api';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { api } from '../shared/services/api';
 
 // ─── Payment Config (frontend fallback) ─────────────────────────────────────
 // Backend hiện chưa có endpoint trả cấu hình ngân hàng,
@@ -264,6 +264,7 @@ const Spinner = ({ size = 20, color = '#059669' }) => (
 // ─── Main Component ───────────────────────────────────────────────────────────
 export default function CheckoutPage() {
   const location = useLocation();
+  const navigate = useNavigate();
   const bookingData = location?.state || null;
 
   const [isProcessing, setIsProcessing] = useState(false);
@@ -277,17 +278,15 @@ export default function CheckoutPage() {
   const [proofUploading, setProofUploading] = useState(false);
   const [proofSubmitting, setProofSubmitting] = useState(false);
   const [proofPreview, setProofPreview] = useState('');
+  const [uploadedProofUrl, setUploadedProofUrl] = useState('');
   const [transferReference, setTransferReference] = useState('');
   const [proofError, setProofError] = useState('');
-  const [success, setSuccess] = useState(false);
 
   const transferReferenceRef = useRef('');
-  const bookingIdRef = useRef(null);
-  const bookingFinalizedRef = useRef(false);
   const confirmButtonRef = useRef(null);
 
-  const createdProofUrl = createdBooking?.transferProofImageUrl || '';
-  const proofUrl = createdProofUrl || '';
+  const createdProofUrl = uploadedProofUrl || createdBooking?.transferProofImageUrl || '';
+  const proofUrl = createdProofUrl || proofPreview || '';
 
   const { toast, ToastContainer } = useToast();
 
@@ -295,77 +294,22 @@ export default function CheckoutPage() {
     transferReferenceRef.current = transferReference;
   }, [transferReference]);
 
-  // Tạo booking thật từ backend để lấy `bookingCode` + `id`
-  useEffect(() => {
-    if (!bookingData) return;
-    if (createdBooking || bookingIdRef.current) return;
-
-    let cancelled = false;
-    setIsCreatingBookingForQr(true);
-    setError('');
-
-    const create = async () => {
-      try {
-        const createReq = {
-          propertyId: bookingData.propertyId,
-          checkInDate: bookingData.checkInDate,
-          checkOutDate: bookingData.checkOutDate,
-          numGuests: bookingData.numGuests,
-          numAdults: bookingData.numAdults,
-          numChildren: bookingData.numChildren,
-          numInfants: bookingData.numInfants,
-          specialRequests: bookingData.specialRequests || '',
-          guestMessage: bookingData.guestMessage || '',
-        };
-
-        const res = await api.createBooking(createReq);
-        if (cancelled) return;
-        if (!res.success || !res.data) {
-          throw new Error('Không thể tạo booking để hiển thị QR.');
-        }
-
-        setCreatedBooking(res.data);
-        bookingIdRef.current = res.data.id;
-      } catch (err) {
-        if (!cancelled) setError(err?.message || 'Không thể tạo booking để hiển thị QR.');
-      } finally {
-        if (!cancelled) setIsCreatingBookingForQr(false);
-      }
-    };
-
-    create();
-    return () => {
-      cancelled = true;
-    };
-  }, [bookingData, createdBooking]);
-
-  const handleUploadAndSubmitProof = async (file) => {
-    if (!createdBooking) return;
+  const handleUploadProof = async (file) => {
     setProofError('');
     try {
       setProofUploading(true);
       const uploadRes = await api.uploadImage(file);
-      let uploadedUrl = uploadRes?.data?.url;
+      const uploadedUrl = uploadRes?.data?.url;
       if (!uploadedUrl) throw new Error('Upload biên lai thất bại');
 
       setProofPreview(uploadedUrl);
-      setProofUploading(false);
-      setProofSubmitting(true);
-
-      const submitRes = await api.submitTransferProof(createdBooking.id, {
-        transferProofImageUrl: uploadedUrl,
-        transferReference: transferReferenceRef.current || '',
-      });
-      if (!submitRes.success) throw new Error(submitRes.message || 'Gửi biên lai thất bại');
-
-      setCreatedBooking(submitRes.data);
-      toast('Đã gửi biên lai thành công!', 'success');
+      setUploadedProofUrl(uploadedUrl);
+      toast('Đã tải biên lai lên thành công!', 'success');
       confirmButtonRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
     } catch (e) {
-      setProofError(e?.message || 'Không thể upload/gửi biên lai');
+      setProofError(e?.message || 'Không thể tải lên biên lai');
     } finally {
       setProofUploading(false);
-      setProofSubmitting(false);
     }
   };
 
@@ -382,11 +326,58 @@ export default function CheckoutPage() {
     setError('');
     try {
       if (!createdProofUrl) throw new Error('Vui lòng upload biên lai trước khi xác nhận.');
-      bookingFinalizedRef.current = true;
-      setSuccess(true);
+      setProofSubmitting(true);
+
+      const createReq = {
+        propertyId: bookingData.propertyId,
+        checkInDate: bookingData.checkInDate,
+        checkOutDate: bookingData.checkOutDate,
+        numGuests: bookingData.numGuests,
+        numAdults: bookingData.numAdults,
+        numChildren: bookingData.numChildren,
+        numInfants: bookingData.numInfants,
+        specialRequests: bookingData.specialRequests || '',
+        guestMessage: bookingData.guestMessage || '',
+      };
+
+      const createRes = await api.createBooking(createReq);
+      if (!createRes.success || !createRes.data?.id) {
+        throw new Error('Không thể tạo booking. Vui lòng thử lại.');
+      }
+
+      const submitRes = await api.submitTransferProof(createRes.data.id, {
+        transferProofImageUrl: createdProofUrl,
+        transferReference: transferReferenceRef.current || '',
+      });
+      if (!submitRes.success || !submitRes.data) {
+        throw new Error('Không thể gửi biên lai cho booking.');
+      }
+
+      setCreatedBooking(submitRes.data);
+      const bookingRecord = {
+        ...submitRes.data,
+        transferReference: transferReferenceRef.current || '',
+        transferProofImageUrl: createdProofUrl,
+      };
+
+      try {
+        const storageKey = 'guest-booking-history';
+        const existingRaw = localStorage.getItem(storageKey);
+        const existing = existingRaw ? JSON.parse(existingRaw) : [];
+        const safeExisting = Array.isArray(existing) ? existing : [];
+        const next = [bookingRecord, ...safeExisting.filter((item) => item?.id !== bookingRecord?.id)];
+        localStorage.setItem(storageKey, JSON.stringify(next.slice(0, 20)));
+      } catch (storageError) {
+        console.warn('Cannot cache booking history in localStorage', storageError);
+      }
+
+      navigate('/booking-history', {
+        state: { highlightedBookingId: bookingRecord?.id || null },
+      });
     } catch (err) {
       setError(err.message || 'Có lỗi xảy ra. Vui lòng thử lại.');
     } finally {
+      setProofSubmitting(false);
       setIsProcessing(false);
     }
   };
@@ -417,20 +408,6 @@ export default function CheckoutPage() {
   const propertyTitle = property?.title ?? property?.name ?? 'Chỗ nghỉ';
   const propertyTypeLabel = property?.propertyType?.name ?? '';
   const propertyImageUrl = property?.primaryImageUrl ?? '';
-
-  // ── Success Screen ──
-  if (success) {
-    return (
-      <div style={{ ...S.page, display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh' }}>
-        <style>{`@keyframes spin { to { transform: rotate(360deg); } } @keyframes fadeSlideIn { from { opacity:0; transform:translateY(-10px); } to { opacity:1; transform:none; } } @keyframes bounceIn { 0%{transform:scale(.5);opacity:0} 70%{transform:scale(1.1)} 100%{transform:scale(1);opacity:1} }`}</style>
-        <div style={{ textAlign: 'center', padding: 40 }}>
-          <div style={{ fontSize: 80, marginBottom: 16, animation: 'bounceIn .6s ease' }}>🎉</div>
-          <h2 style={{ fontSize: 28, fontWeight: 800, color: '#059669', marginBottom: 8 }}>Đã gửi biên lai!</h2>
-          <p style={{ color: '#6b7280', fontSize: 16, fontFamily: "'Nunito', sans-serif" }}>Vui lòng chờ chủ nhà xác nhận booking của bạn.</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div style={S.page}>
@@ -490,14 +467,14 @@ export default function CheckoutPage() {
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: 200, background: '#f9fafb', borderRadius: 14 }}>
                         <Spinner size={36} />
                       </div>
-                    ) : paymentInfo?.bankBin && paymentInfo.bankAccountNumber && createdBooking?.bookingCode ? (
+                    ) : paymentInfo?.bankBin && paymentInfo.bankAccountNumber ? (
                       <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap', marginTop: 8 }}>
                         <img
                           src={buildVietQrUrl({
                             bankBin: paymentInfo.bankBin,
                             accountNumber: paymentInfo.bankAccountNumber,
                             amountVnd: bookingData.totalPrice,
-                            addInfo: `STAYEASE BOOKING ${createdBooking.bookingCode}`,
+                            addInfo: transferReference || `STAYEASE ${bookingData.propertyId}-${bookingData.checkInDate}`,
                             accountName: paymentInfo.bankAccountHolder,
                           })}
                           alt="VietQR"
@@ -525,9 +502,9 @@ export default function CheckoutPage() {
                           <div style={{ ...S.contentBox, marginTop: 10 }}>
                             <div>
                               <p style={{ ...S.infoLabel, fontSize: 13, margin: '0 0 2px' }}>Nội dung</p>
-                              <p style={{ ...S.infoVal, fontSize: 14, margin: 0 }}>STAYEASE BOOKING {createdBooking.bookingCode}</p>
+                              <p style={{ ...S.infoVal, fontSize: 14, margin: 0 }}>{transferReference || `STAYEASE ${bookingData.propertyId}-${bookingData.checkInDate}`}</p>
                             </div>
-                            <button style={S.copyBtn} onClick={() => handleCopyToClipboard(`STAYEASE BOOKING ${createdBooking.bookingCode}`, 'Nội dung')}>
+                            <button style={S.copyBtn} onClick={() => handleCopyToClipboard(transferReference || `STAYEASE ${bookingData.propertyId}-${bookingData.checkInDate}`, 'Nội dung')}>
                               <svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
                             </button>
                           </div>
@@ -554,9 +531,7 @@ export default function CheckoutPage() {
                     <h3 style={S.h3}>Tải lên biên lai chuyển khoản</h3>
                     <p style={{ color: '#6b7280', fontSize: 14, margin: '0 0 16px' }}>Sau khi chuyển khoản, vui lòng chụp ảnh màn hình và tải lên đây để chủ nhà xác nhận.</p>
 
-                    {!createdBooking?.id ? (
-                      <p style={{ color: '#9ca3af', fontSize: 14 }}>Vui lòng hoàn thành Bước 1 để tiếp tục.</p>
-                    ) : (
+                    {(
                       <>
                         {proofError && <div style={{ color: '#dc2626', fontSize: 13, marginBottom: 12, fontWeight: 600 }}>{proofError}</div>}
 
@@ -578,7 +553,7 @@ export default function CheckoutPage() {
                             type="file"
                             accept="image/*"
                             disabled={proofUploading || proofSubmitting || !!createdProofUrl}
-                            onChange={e => { const f = e.target.files?.[0]; if (f) handleUploadAndSubmitProof(f); }}
+                            onChange={e => { const f = e.target.files?.[0]; if (f) handleUploadProof(f); }}
                             style={{ display: 'none' }}
                           />
                           <label htmlFor="proofFile" style={S.uploadBtn(proofUploading || proofSubmitting || !!createdProofUrl)}>

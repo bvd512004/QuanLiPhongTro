@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { AuthActionsContext, AuthStateContext } from '../providers/AuthProvider';
+import { AuthActionsContext, AuthStateContext } from '../app/providers/AuthProvider';
 
 const Header = () => {
   const location = useLocation();
@@ -179,6 +179,9 @@ const Header = () => {
                   <>
                     <Link to="/profile" className="flex items-center gap-3 px-4 py-2 text-sm hover:bg-gray-100">
                       <span className="material-symbols-outlined !text-[16px]">person</span> Tài khoản
+                    </Link>
+                    <Link to="/booking-history" className="flex items-center gap-3 px-4 py-2 text-sm hover:bg-gray-100">
+                      <span className="material-symbols-outlined !text-[16px]">receipt_long</span> Lịch sử đặt phòng
                     </Link>
 
                     {user?.roles?.includes('ROLE_HOST') && (
