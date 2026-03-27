@@ -1,30 +1,99 @@
-import HomePage from "../page/HomePage";
-import LoginPage from "../page/LoginPage";
-import RegisterPage from "../page/RegisterPage";
-import ProfilePage from "../component/home/ProfilePage";
-import UpdateProfilePage from "../page/UpdateProfilePage";
-
+import React from "react";
+import Layout from "../../layout/Layout";
+import HomePage from "../../page/HomePage";
+import ProfilePage from "../../page/ProfilePage";
+import LoginPage from "../../page/LoginPage";
+import RegisterPage from "../../page/RegisterPage";
+import AdminPropertyModerationPage from "../../feature/admin/pages/AdminPropertyModerationPage";
+import UpdateProfilePage from "../../page/UpdateProfilePage";
+import AdminDashboardPage from "../../feature/admin/pages/AdminDashboardPage";
+import AdminUserManagementPage from "../../feature/admin/pages/AdminUserManagementPage";
+import ListingPage from "../../page/ListingPage";
+import CheckoutPage from "../../page/CheckoutPage";
+import BookingHistoryPage from "../../page/BookingHistoryPage";
 const publicRoutes = [
-  {
-    path: "/",              
-    element: <HomePage />
-  },
-  {
-    path: "/login",
-    element: <LoginPage />
-  },
-  {
-    path: "/register",
-    element: <RegisterPage />
-  },
-  {
-    path: "/profile",
-    element: <ProfilePage />
-  },
-  {
-    path: "/profile/edit",
-    element: <UpdateProfilePage />
-  }
+    
+    {
+        path: "/",
+        element: <Layout />,
+        children: [
+            { index: true, element: <HomePage /> },
+
+        ]
+    },
+    {
+        path: "/profile",
+        element: <Layout />,
+        children: [
+          { index: true, element: <ProfilePage /> },     // /profile
+          { path: "edit", element: <UpdateProfilePage /> } // /profile/edit
+        ]
+      },
+    {
+        path: "/login",
+        element: <Layout />,
+        children: [
+            { index: true, element: <LoginPage /> },
+        ],
+    },
+    {
+        path: "/register",
+        element: <Layout />,
+        children: [
+            { index: true, element: <RegisterPage /> },
+        ],
+    },
+    {
+        path: "/short-term-listings",
+        element: <Layout />,
+        children: [
+            { index: true, element: <HomePage /> },
+        ],
+    }
+    ,
+    {
+        path: "/admin/properties/moderation",
+        element: <Layout />,
+        children: [
+            { index: true, element: <AdminPropertyModerationPage /> },
+        ],
+    }
+    ,
+    {
+        path: "/admin/dashboard",
+        element: <Layout />,
+        children: [
+            { index: true, element: <AdminDashboardPage /> },
+        ],
+    },
+    {
+        path: "/admin/users",
+        element: <Layout />,
+        children: [
+            { index: true, element: <AdminUserManagementPage /> },
+        ],
+    },
+    {
+        path: "/listing/:id",
+        element: <Layout />,
+        children: [
+            { index: true, element: <ListingPage /> },
+        ],
+    },
+    {
+        path: "/checkout",
+        element: <Layout />,
+        children: [
+            { index: true, element: <CheckoutPage /> },
+        ],
+    },
+    {
+        path: "/booking-history",
+        element: <Layout />,
+        children: [
+            { index: true, element: <BookingHistoryPage /> },
+        ],
+    },
 ];
 
 export default publicRoutes;

@@ -1,7 +1,7 @@
 import { useState, useContext } from "react";
-import { login as loginApi } from '../services/authService'
+import { login as loginApi } from '../shared/services/authService'
 import { useNavigate, Link } from "react-router-dom";
-import { AuthActionsContext } from '../providers/AuthProvider';
+import { AuthActionsContext } from '../app/providers/AuthProvider';
 
 function LoginPage() {
   const [email, setEmail] = useState("");

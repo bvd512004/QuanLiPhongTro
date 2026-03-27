@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getCurrentUser, updateProfile } from "@/services/authService";
+import { getCurrentUser, updateProfile } from "../shared/services/authService";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
